@@ -186,18 +186,135 @@
 
 \subsection{Principles}
 \begin{frame}
-	\frametitle{gugus}
-	content
+	\frametitle{FIVM}
+
+		$Q_1(a, b, c) = R_1(a, b), R_2(b, c), R_3(a, b, d)$
+		\begin{columns}[c] 
+			\begin{column}{0.45\textwidth} 
+				\begin{figure}
+					\includegraphics[height=0.6\textheight]{VariableOrder.pdf}
+					\caption{Variable Order}
+				\end{figure}
+			\end{column}
+			\begin{column}{0.45\textwidth} 
+				\begin{figure}
+					\includegraphics[height=0.6\textheight]{ViewTree.pdf}
+					\caption{View Tree}
+				\end{figure}
+			\end{column}
+		\end{columns}
+
 \end{frame}
 \subsection{Query Classes}
-\subsection{Variable Order \& Join Tree}
+\begin{frame}
+	\frametitle{Query Classes}
+		\begin{table}
+		\begin{tabular}{lclclcl}
+			& \textbf{Preprocessing} & \textbf{Delay} & \textbf{Update}\\
+			\midrule
+			\textbf{Q-Hierarchical} &$O(1)$ & $O(1)$  & $O(1)$ \\
+			\textbf{Hierarchical}&$O(1)$ & $O(1)$  & $O(1)$ \\
+			\textbf{Input Top} &$O(1)$ & $O(1)$  & $O(1)$  \\
+			\textbf{Neither}&$O(1)$ & $O(1)$  & $O(1)$ \\
+		\end{tabular}
+		\caption{Performances of Query Classes}
+	\end{table}
+\end{frame}
+\subsection{Cascading Example}
+\begin{frame}
+	\frametitle{Cascading Example}
+	$Q_1(a, b, c) = R_1(a,b), R_2(b,c)$\\
+	$Q_2(a, b, c, d) = R_1(a,b), R_2(b,c), R_3(c,d)$
+		\begin{figure}
+		\includegraphics[height=0.6\textheight]{PreCascadingEx.pdf}
+		\caption{Variable Order}
+	\end{figure}
+\end{frame}
+\begin{frame}
+	\frametitle{Cascading Example}
+	$Q_1(a, b, c) = R_1(a,b), R_2(b,c)$\\
+	$Q_2(a, b, c, d) = R_1(a,b), R_2(b,c), R_3(c,d)$
+	\begin{figure}
+		\includegraphics[height=0.6\textheight]{CascadingEx.pdf}
+		\caption{Variable Order}
+	\end{figure}
+\end{frame}
 
 \section{CAVIR}
 \subsection{Enumerated Views}
-\subsection{Cascading Queries}
+\begin{frame}
+	\frametitle{Valid Views}
+	$Q_1(a, b, c, d, e) = R_1(a, b, c), R_2(a, b, d), R_3(a, e)$
+\begin{columns}[c] 
+	\begin{column}{0.5\textwidth} 
+		$V_1(a, b, c, d) = R_1(a, b, c), R_2(a, b, d)$ \\
+		$V_2(a, b, c, e) = R_1(a,b, c), R_3(a, e)$
+		$V_3(a, b ,d ,e) = R_2(a, b ,d), R_3(a, e)$
+	\end{column}
+	\begin{column}{0.45\textwidth} 
+		\begin{figure}
+			\includegraphics[height=0.6\textheight]{NonValidView.pdf}
+			\caption{View R1, R3 is not valid}
+		\end{figure}
+	\end{column}
+\end{columns}
+\end{frame}
+\begin{frame}
+	\frametitle{Valid Views: Example}
+	Show big example
+\end{frame}
+\begin{frame}
+	\frametitle{Valid Views: Rule}
+	Complete subtrees, combination of sibblings
+\end{frame}
+
+\subsection{Combining Queries Queries}
+\begin{frame}
+	\frametitle{Naive Idea}
+	Compare all with all
+\end{frame}
+\begin{frame}
+	\frametitle{Greedy}
+	pseudo Code
+\end{frame}
+\begin{frame}
+	\frametitle{Complete Solutions}
+	How to explain
+\end{frame}
+\begin{frame}
+	\frametitle{Reverse Search}
+	Compute resolving views for non-q-hierarchical queries \& find them in q hierarchical Queries
+\end{frame}
+
 \subsection{Examples}
+\begin{frame}
+	\frametitle{Examples}
+	Examples!
+\end{frame}
 
+\section{Open Problems}
+\begin{frame}
+	\frametitle{Greedy}
+	Check all orderings; check some orderings?
+\end{frame}
+\begin{frame}
+	\frametitle{Complete Solutions}
+	How to avoid n! views for many similar relations?
+\end{frame}
+\begin{frame}
+	\frametitle{Reverse Search}
+	How?
+\end{frame}
 
+\subsection{Characterisation of reducable Query sets}
+\begin{frame}
+	Ideas?
+\end{frame}
+\subsection{Non cascading q hierarchical optimizations }
+\begin{frame}
+	Take as base not only the q-hierarchical queries but any query
+	use q-hierarchical subtrees
+\end{frame}
 
 \section{Examples}
 \subsection{text}
