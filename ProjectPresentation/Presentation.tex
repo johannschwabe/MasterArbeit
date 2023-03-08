@@ -24,7 +24,6 @@
 	%aspectratio=169, % Uncomment to set the aspect ratio to a 16:9 ratio which matches the aspect ratio of 1080p and 4K screens and projectors
 ]{beamer}
 
-
 \usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule for better rules in tables
 
 %----------------------------------------------------------------------------------------
@@ -141,7 +140,7 @@
 %	PRESENTATION INFORMATION
 %----------------------------------------------------------------------------------------
 
-\title[CAVIR]{Cascading View Trees} % The short title in the optional parameter appears at the bottom of every slide, the full title in the main parameter is only on the title page
+\title[CAVIR]{CAVIR} % The short title in the optional parameter appears at the bottom of every slide, the full title in the main parameter is only on the title page
 
 \subtitle{FIVM Extension} % Presentation subtitle, remove this command if a subtitle isn't required
 
@@ -184,9 +183,11 @@
 
 %------------------------------------------------
 
-\subsection{Principles}
+\subsection{Principles  of FIVM}
 \begin{frame}
-	\frametitle{FIVM}
+		\frametitle{FIVM}
+		\framesubtitle{Principles of FIVM}
+
 
 		$Q_1(a, b, c) = R_1(a, b), R_2(b, c), R_3(a, b, d)$
 		\begin{columns}[c] 
@@ -208,42 +209,72 @@
 \subsection{Query Classes}
 \begin{frame}
 	\frametitle{Query Classes}
-		\begin{table}
-		\begin{tabular}{lclclcl}
-			& \textbf{Preprocessing} & \textbf{Delay} & \textbf{Update}\\
-			\midrule
-			\textbf{Q-Hierarchical} &$O(1)$ & $O(1)$  & $O(1)$ \\
-			\textbf{Hierarchical}&$O(1)$ & $O(1)$  & $O(1)$ \\
-			\textbf{Input Top} &$O(1)$ & $O(1)$  & $O(1)$  \\
-			\textbf{Neither}&$O(1)$ & $O(1)$  & $O(1)$ \\
-		\end{tabular}
-		\caption{Performances of Query Classes}
-	\end{table}
+	\framesubtitle{FIVM}
+	Complexity of Conjunctive Queries:
+	\begin{align*}
+		Preprocessing & & O(N^w) \\
+		Delay & & O(1) \\
+		Update & & O(N^\delta)
+	\end{align*}
+	$w$: Fractional Hypertree Width\\
+	$\delta$: largest $w$ over all delta queries
+	\begin{block}{Q-Hierarchical}
+		$w = 1, \delta=0$ 
+	\end{block}
+	
 \end{frame}
-\subsection{Cascading Example}
+\subsection{Motivating Example}
 \begin{frame}
-	\frametitle{Cascading Example}
+	\frametitle{Motivating Example}
+	\framesubtitle{FIVM}
 	$Q_1(a, b, c) = R_1(a,b), R_2(b,c)$\\
 	$Q_2(a, b, c, d) = R_1(a,b), R_2(b,c), R_3(c,d)$
 		\begin{figure}
 		\includegraphics[height=0.6\textheight]{PreCascadingEx.pdf}
-		\caption{Variable Order}
+		\caption{View Tree Source Queries}
 	\end{figure}
 \end{frame}
 \begin{frame}
-	\frametitle{Cascading Example}
+	\frametitle{Motivating Example}
+	\framesubtitle{FIVM}
 	$Q_1(a, b, c) = R_1(a,b), R_2(b,c)$\\
 	$Q_2(a, b, c, d) = R_1(a,b), R_2(b,c), R_3(c,d)$
 	\begin{figure}
 		\includegraphics[height=0.6\textheight]{CascadingEx.pdf}
-		\caption{Variable Order}
+		\caption{View Tree Cascading}
 	\end{figure}
 \end{frame}
 
+\begin{frame}
+	\frametitle{Motivating Example II}
+	\framesubtitle{FIVM}
+	$Q_1(a, b, c) = R_1(a,b), R_2(b,c), R_4(b,e)$\\
+	$Q_2(a, b, c, d) = R_1(a,b), R_2(b,c), R_3(c,d)$\\
+	$Q_3(a,b,e,f) = R_1(a,b), R_4(b,e), R_5(e,f)$
+	\begin{figure}
+		\includegraphics[width=1.05\linewidth, trim=0 2cm 0 2cm]{PartitionViewExample.pdf}
+		\caption{View Tree with partial view}
+	\end{figure}
+\end{frame}
+
+
 \section{CAVIR}
-\subsection{Enumerated Views}
+\subsection{Valid Views}
+\begin{frame}
+	\frametitle{Valid Views: Rule}
+	\framesubtitle{CAVIR}
+	\begin{block}{Valid Views}
+		At each Variable Order Node, any permutation of child nodes / relations and their complete subtree is valid.\\
+		This ensures that
+		\begin{enumerate}
+			\item The views can be used to efficiently update the original query
+			\item The views are not larger than the original query
+		\end{enumerate}
+	\end{block}
+\end{frame}
 \begin{frame}
 	\frametitle{Valid Views}
+	\framesubtitle{CAVIR}
 	$Q_1(a, b, c, d, e) = R_1(a, b, c), R_2(a, b, d), R_3(a, e)$
 \begin{columns}[c] 
 	\begin{column}{0.5\textwidth} 
@@ -253,7 +284,7 @@
 	\end{column}
 	\begin{column}{0.45\textwidth} 
 		\begin{figure}
-			\includegraphics[height=0.6\textheight]{NonValidView.pdf}
+			\includegraphics[height=0.4\textheight, trim=0 2cm 0 3cm]{NonValidView.pdf}
 			\caption{View R1, R3 is not valid}
 		\end{figure}
 	\end{column}
@@ -261,328 +292,101 @@
 \end{frame}
 \begin{frame}
 	\frametitle{Valid Views: Example}
-	Show big example
-\end{frame}
-\begin{frame}
-	\frametitle{Valid Views: Rule}
-	Complete subtrees, combination of sibblings
+	\framesubtitle{CAVIR}
+	\begin{columns}[c] 
+		\begin{column}{0.5\textwidth} 
+			$V_1= R_1, R_2$ \\
+			$V_2= R_1, R_3, R_5$ \\
+			$V_3 = R_1, R_2, R_3, R_5$ \\
+			$V_4 = R_3, R_5$ \\
+			$...$
+		\end{column}
+		\begin{column}{0.45\textwidth} 
+			\begin{figure}
+				\includegraphics[height=0.6\textheight]{BigViewEx.png}
+				\caption{$Q(x,y,a,b,c,d) = R_1(x,y), R_2(x,y), R_3(x,y,a), R_4(x,y,b), R_5(x,y,a,c),R_6(x,y,b,d)$}
+			\end{figure}
+		\end{column}
+	\end{columns}
+
 \end{frame}
 
-\subsection{Combining Queries Queries}
+
+\subsection{Combining Queries}
 \begin{frame}
 	\frametitle{Naive Idea}
-	Compare all with all
+	\framesubtitle{CAVIR}
+	\begin{figure}
+		\includegraphics[height=0.7\textheight]{Naive.png}
+		\caption{Naive Comparison}
+	\end{figure}
 \end{frame}
 \begin{frame}
 	\frametitle{Greedy}
-	pseudo Code
-\end{frame}
-\begin{frame}
-	\frametitle{Complete Solutions}
-	How to explain
+	\framesubtitle{CAVIR}
+		\begin{figure}
+		\includegraphics[height=0.7\textheight]{Greedy.png}
+		\caption{Greedy Comparison}
+	\end{figure}
 \end{frame}
 \begin{frame}
 	\frametitle{Reverse Search}
-	Compute resolving views for non-q-hierarchical queries \& find them in q hierarchical Queries
+	\framesubtitle{CAVIR}
+	\begin{block}{Reverse Search}
+		Compute View-Patterns that could make a Non-Q-Hierarchical Query Q-Hierarchical. Then search for those in Q-Hierarchical Queries!
+	\end{block}
 \end{frame}
 
 \subsection{Examples}
 \begin{frame}
 	\frametitle{Examples}
-	Examples!
-\end{frame}
-
-\section{Open Problems}
-\begin{frame}
-	\frametitle{Greedy}
-	Check all orderings; check some orderings?
-\end{frame}
-\begin{frame}
-	\frametitle{Complete Solutions}
-	How to avoid n! views for many similar relations?
-\end{frame}
-\begin{frame}
-	\frametitle{Reverse Search}
-	How?
-\end{frame}
-
-\subsection{Characterisation of reducable Query sets}
-\begin{frame}
-	Ideas?
-\end{frame}
-\subsection{Non cascading q hierarchical optimizations }
-\begin{frame}
-	Take as base not only the q-hierarchical queries but any query
-	use q-hierarchical subtrees
-\end{frame}
-
-\section{Examples}
-\subsection{text}
-\begin{frame}
-	\frametitle{Paragraphs of Text}
-	
-	Sed iaculis \alert{dapibus gravida}. Morbi sed tortor erat, nec interdum arcu. Sed id lorem lectus. Quisque viverra augue id sem ornare non aliquam nibh tristique. Aenean in ligula nisl. Nulla sed tellus ipsum. Donec vestibulum ligula non lorem vulputate fermentum accumsan neque mollis.
-	
-	\bigskip % Vertical whitespace
-	
-	% Quote example
-	\begin{quote}
-		Sed diam enim, sagittis nec condimentum sit amet, ullamcorper sit amet libero. Aliquam vel dui orci, a porta odio.\\
-		--- Someone, somewhere\ldots
-	\end{quote}
-	
-	\bigskip % Vertical whitespace
-	
-	Nullam id suscipit ipsum. Aenean lobortis commodo sem, ut commodo leo gravida vitae. Pellentesque vehicula ante iaculis arcu pretium rutrum eget sit amet purus. Integer ornare nulla quis neque ultrices lobortis.
-\end{frame}
-
-%------------------------------------------------
-
-\begin{frame}
-	\frametitle{Lists}
-	\framesubtitle{Bullet Points and Numbered Lists} % Optional subtitle
-	
-	\begin{itemize}
-		\item Lorem ipsum dolor sit amet, consectetur adipiscing elit
-		\item Aliquam blandit faucibus nisi, sit amet dapibus enim tempus
-		\begin{itemize}
-			\item Lorem ipsum dolor sit amet, consectetur adipiscing elit
-			\item Nam cursus est eget velit posuere pellentesque
-		\end{itemize}
-		\item Nulla commodo, erat quis gravida posuere, elit lacus lobortis est, quis porttitor odio mauris at libero
-	\end{itemize}
-	
-	\bigskip % Vertical whitespace
-	
-	\begin{enumerate}
-		\item Nam cursus est eget velit posuere pellentesque
-		\item Vestibulum faucibus velit a augue condimentum quis convallis nulla gravida 
-	\end{enumerate}
-\end{frame}
-
-%------------------------------------------------
-
-\subsection{Blocks}
-
-\begin{frame}
-	\frametitle{Blocks of Highlighted Text}
-	
-	\begin{block}{Block Title}
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer lectus nisl, ultricies in feugiat rutrum, porttitor sit amet augue.
-	\end{block}
-	
-	\begin{exampleblock}{Example Block Title}
-		Aliquam ut tortor mauris. Sed volutpat ante purus, quis accumsan.
-	\end{exampleblock}
-	
-	\begin{alertblock}{Alert Block Title}
-		Pellentesque sed tellus purus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.
-	\end{alertblock}
-	
-	\begin{block}{} % Block without title
-		Suspendisse tincidunt sagittis gravida. Curabitur condimentum, enim sed venenatis rutrum, ipsum neque consectetur orci.
-	\end{block}
-\end{frame}
-
-%------------------------------------------------
-
-\subsection{Columns}
-
-\begin{frame}
-	\frametitle{Multiple Columns}
-	\framesubtitle{Subtitle} % Optional subtitle
-	
-	\begin{columns}[c] % The "c" option specifies centered vertical alignment while the "t" option is used for top vertical alignment
-		\begin{column}{0.45\textwidth} % Left column width
-			\textbf{Heading}
-			\begin{enumerate}
-				\item Statement
-				\item Explanation
-				\item Example
-			\end{enumerate}
-		\end{column}
-		\begin{column}{0.5\textwidth} % Right column width
-			Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer lectus nisl, ultricies in feugiat rutrum, porttitor sit amet augue. Aliquam ut tortor mauris. Sed volutpat ante purus, quis accumsan dolor.
-		\end{column}
-	\end{columns}
-\end{frame}
-
-%------------------------------------------------
-
-\section{Table and Figure Examples}
-
-\subsection{Table}
-
-\begin{frame}
-	\frametitle{Table}
-	\framesubtitle{Subtitle} % Optional subtitle
-	
-	\begin{table}
-		\begin{tabular}{l l l}
-			\toprule
-			\textbf{Treatments} & \textbf{Response 1} & \textbf{Response 2}\\
-			\midrule
-			Treatment 1 & 0.0003262 & 0.562 \\
-			Treatment 2 & 0.0015681 & 0.910 \\
-			Treatment 3 & 0.0009271 & 0.296 \\
-			\bottomrule
-		\end{tabular}
-		\caption{Table caption}
-	\end{table}
-\end{frame}
-
-%------------------------------------------------
-
-\subsection{Figure}
-
-\begin{frame}
-	\frametitle{Figure}
-	
+	\framesubtitle{CAVIR}
 	\begin{figure}
-		\includegraphics[width=0.8\linewidth]{dast-logo.png}
-		\caption{Creodocs logo.}
+		\includegraphics[width=\linewidth]{Ex1.pdf}
+		\caption{Example 1}
 	\end{figure}
 \end{frame}
 
-%------------------------------------------------
+\begin{frame}
+	\frametitle{Examples: Many Children}
+	\framesubtitle{CAVIR}
+	\begin{figure}
+		\includegraphics[width=\linewidth]{ManyChildrenExample.pdf}
+		\caption{Example 2}
+	\end{figure}
+\end{frame}
 
-\section{Mathematics}
+\section{Open Problems}
+\subsection{Algorithmic}
+\begin{frame}
+	\frametitle{Open Algorithmic Problems}
+	\framesubtitle{Open Problems}
+	\begin{block}{Optimized Greedy}
+		Find correct query order / check some query orders
+	\end{block}
+	\begin{block}{Naive Solutions \& Greedy}
+		Nodes with many children have many views
+	\end{block}
+	\begin{block}{Reverse Search}
+		Avoid enumeration of all views
+	\end{block}
+\end{frame}
+\subsection{Theoretical}
 
 \begin{frame}
-	\frametitle{Definitions \& Examples}
-	
-	\begin{definition}
-		A \alert{prime number} is a number that has exactly two divisors.
-	\end{definition}
-	
-	\smallskip % Vertical whitespace
-	
-	\begin{example}
-		\begin{itemize}
-			\item 2 is prime (two divisors: 1 and 2).
-			\item 3 is prime (two divisors: 1 and 3).
-			\item 4 is not prime (\alert{three} divisors: 1, 2, and 4).
-		\end{itemize}
-	\end{example}
-	
-	\smallskip % Vertical whitespace
-	
-	You can also use the \texttt{theorem}, \texttt{lemma}, \texttt{proof} and \texttt{corollary} environments.
-\end{frame}
+	\frametitle{Open Theoretical Problems}
+	\framesubtitle{Open Problems}
+	\begin{block}{Classification of Query sets}
+		Which sets of Queries are Cascading Q-Hierarchical
+	\end{block}
 
-%------------------------------------------------
-
-\begin{frame}
-	\frametitle{Theorem, Corollary \& Proof}
-	
-	\begin{theorem}[Mass--energy equivalence]
-		$E = mc^2$
-	\end{theorem}
-	
-	\begin{corollary}
-		$x + y = y + x$
-	\end{corollary}
-	
-	\begin{proof}
-		$\omega + \phi = \epsilon$
-	\end{proof}
-\end{frame}
-
-%------------------------------------------------
-
-\begin{frame}
-	\frametitle{Equation}
-
-	\begin{equation}
-		\cos^3 \theta =\frac{1}{4}\cos\theta+\frac{3}{4}\cos 3\theta
-	\end{equation}
-\end{frame}
-
-%------------------------------------------------
-
-\begin{frame}[fragile] % Need to use the fragile option when verbatim is used in the slide
-	\frametitle{Verbatim}
-	
-	\begin{example}[Theorem Slide Code]
-		\begin{verbatim}
-			\begin{frame}
-				\frametitle{Theorem}
-				\begin{theorem}[Mass--energy equivalence]
-					$E = mc^2$
-				\end{theorem}
-		\end{frame}\end{verbatim} % Must be on the same line
-	\end{example}
-\end{frame}
-
-%------------------------------------------------
-
-\begin{frame}
-	Slide without title.
-\end{frame}
-
-%------------------------------------------------
-
-\section{Referencing}
-
-\begin{frame}
-	\frametitle{Citing References}
-	
-	An example of the \texttt{\textbackslash cite} command to cite within the presentation:
-	
-	\bigskip % Vertical whitespace
-	
-	This statement requires citation \cite{p1,p2}.
-\end{frame}
-
-%------------------------------------------------
-
-\begin{frame} % Use [allowframebreaks] to allow automatic splitting across slides if the content is too long
-	\frametitle{References}
-	
-	\begin{thebibliography}{99} % Beamer does not support BibTeX so references must be inserted manually as below, you may need to use multiple columns and/or reduce the font size further if you have many references
-		\footnotesize % Reduce the font size in the bibliography
-		
-		\bibitem[Smith, 2022]{p1}
-			John Smith (2022)
-			\newblock Publication title
-			\newblock \emph{Journal Name} 12(3), 45 -- 678.
-			
-		\bibitem[Kennedy, 2023]{p2}
-			Annabelle Kennedy (2023)
-			\newblock Publication title
-			\newblock \emph{Journal Name} 12(3), 45 -- 678.
-	\end{thebibliography}
-\end{frame}
-
-%----------------------------------------------------------------------------------------
-%	ACKNOWLEDGMENTS SLIDE
-%----------------------------------------------------------------------------------------
-
-\begin{frame}
-	\frametitle{Acknowledgements}
-	
-	\begin{columns}[t] % The "c" option specifies centered vertical alignment while the "t" option is used for top vertical alignment
-		\begin{column}{0.45\textwidth} % Left column width
-			\textbf{Smith Lab}
-			\begin{itemize}
-				\item Alice Smith
-				\item Devon Brown
-			\end{itemize}
-			\textbf{Cook Lab}
-			\begin{itemize}
-				\item Margaret
-				\item Jennifer
-				\item Yuan
-			\end{itemize}
-		\end{column}		
-		\begin{column}{0.5\textwidth} % Right column width
-			\textbf{Funding}
-			\begin{itemize}
-				\item British Royal Navy
-				\item Norwegian Government
-			\end{itemize}
-		\end{column}
-	\end{columns}
+	\begin{block}{Non Q-Hierarchical Base Queries}
+		\begin{enumerate}
+			\item Use Q-Hierarchical Views from Non Q-Hierarchical Queries
+			\item Target Cascading Hierarchical reductions
+			\item Target any reductions
+		\end{enumerate}
+	\end{block}
 \end{frame}
 
 %----------------------------------------------------------------------------------------
