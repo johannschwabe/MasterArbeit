@@ -1,0 +1,145 @@
+\documentclass[]{article}
+\usepackage{amsmath}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\usepackage{graphicx}
+
+\makeatletter
+\def\BState{\State\hskip-\ALG@thistlm}
+\makeatother
+
+
+%opening
+%\title{CAVIR Pseudo Code}
+%\author{Johann Schwabe}
+%
+%\begin{document}
+%
+%\maketitle
+%
+%
+%\section{Description}
+%\paragraph{Overview}
+%The aim of the algorithm is, given a set of queries $\textbf{Q}$, to find for each Non-Q-Hierarchical Query $NQ_1 \in \textbf{Q}$ a set of Q-Hierarchical Query $Q_1, ..., Q_n \subset \textbf{Q}$ so that $NQ_1$ can be reduced to a Q-Hierarchical Query. A query $Q_x$ is defined by a set of relations, $Rel(Q_x) = R_{x1}, ..., R_{xn}$, it joins and by its free variables, $Var(Q_x)= var_{x1}, ..., var_{xm}$, thus also written as $Q_x(var_{x1}, ... var_{xm})= R_{x1}, ..., R_{xn}$. A relation $R_y$ is a table with schema $(var_{y1}, ... var_{yi})$, thus also written as $R_y(var_{y1}, ... var_{yi})$. A query $Q_1$ can be used to reduce a query $NQ_1$ if there exists a view $VQ_1$, which is a join of relations  $R_1, ..., R_m$ and $R_1, ..., R_m \subseteq Rel(NQ_1) \cap Rel(Q_1)$. A view is a special type of relation as it is materialized during the enumeration of its query, and all variables are free. All valid views $VQ_1^{1...v}$ of a query $Q_1$ are a subset of all permutations of $Rel(Q_1)$ of size $\geq$ 2. If a view $VQ_1$ can be used to reduce $NQ_1$, the new reduced query $NQ_1^1$ is constructed with the relations $Rel(NQ_1) \setminus Rel(VQ_1) + VQ_1$ and the free variables of $NQ_1$. After the reduction, $NQ_1^1$ could be either q-hierarchical or non-q-hierarchical. If $NQ_1^1$ is non-q-hierarchical, more reductions using different views could lead to a q-hierarchical reduction.
+%
+%Thus two key parts of the algorithm are: finding the valid views for q-hierarchical queries and finding compatible views and non-q-hierarichal queries.
+%
+%\paragraph{Valid views}
+%Given the canonical variable order tree of a q-hierarchical query, its valid views can be recursively computed:
+%At each node in the tree, all permutations of the childnodes $\cup$ relations at the node, of length $\geq$ 2 are valid. For example, the valid views at node $y$ in Figure \ref{VO} are any permutation with length $\geq$ 2 of $R_6, (R_5, R_3), R_1, R_2$. Thus $(R_6, R_1)$ and $(R_1, R_5, R_3)$ are valid but $(R_6, R_5)$ is not. The union of the valid views at all nodes is the set of valid views of the query.
+%
+%\begin{figure}[h]
+%	\caption{Variable order tree for query: $Q(x,y,a,b.c,d,e) = R_6(x,y,b,d,e), R_5(x,y,a,c), R_3(x,y,a), R_1(x,y), R_2(x,y), R_0(x)$}
+%	\label{VO}
+%	\includegraphics[scale=0.5]{View Example}
+%\end{figure}
+%
+%\paragraph{Finding Compatible Views}
+%The brute force approach to finding compatible views for q-hierarchical queries is simple: test all views of all q-hierarchical queries with each non-q-hierarchical query. Perform the reduction wherever possible and add the resulting new queries to the corresponding sets. Repeat this process until either a reduction is found for every original query or no new reductions are found. In the worst case, there are $n!$  views per query, with $n$ being the number or relations of the query. Thus this approach is not scalable.
+%A trivial improvement is remembering which queries were already compared in a previous iteration and than ignoring these combinations later on. While this significantly improves the performance, it does not solve the issue of the large number of views.
+%
+%A proposed improvement is to check for compatible views in decreasing size in a q-hierarchical query. Thus, in Figure \ref{VO}, first, check if a view over all relations is compatible, then if any of the views at variable $x$ are compatible and so on. If a view is found, stop early. Unfortunately, Example \ref{Ex1} is a counterexample showing that only the decomposition $Q_2^2$ can be used to reduce $Q_3$. But the view $VQ_1^{R_0,R_1,R_2}(x,y,z)$ used in $Q_2^1(...) $, is a superset of the view $VQ_1^{R_1,R_2}(x,y,z)$ used in $Q_2^2(...)$
+%
+%\begin{equation}
+%	\begin{aligned}\label{Ex1}
+%		&Q_1(...) = R_0(x,y), R_1(x,y), R_2(y,z) & Q-Hierarchical\\
+%		&Q_2(...) =  R_0(x,y), R_1(x,y), R_2(y,z), R_3(x,a) & Non-Q-Hierarchical\\
+%		&Q_3(...) = R_0(x,y), R_3(z,x), R_4(z, a) & Non-Q-Hierarchical\\
+%		\\
+%		&Q_2^1(...) = VQ_1^{R_0,R_1,R_2}(x,y,z), R_3(x,a) & Q-Hierarchical\\
+%		&Q_2^2(...) = VQ_1^{R_1,R_2}(x,y,z), R_0(x,y), R_3(x,a) & Q-Hierarchical\\
+%		\\
+%		&Q_3^1(...) = VQ_2^2(x,y,a), R_4(z,a) & Q-Hierarchical\\
+%	\end{aligned}
+%\end{equation}
+%
+%Another proposed improvement is to stop searching for a decomposition of a query once the first decomposition is found. Unfortunately, again a counterexample exists: Example \ref{Ex2}. In a similar setting to Example \ref{Ex1}, two decompositions exist for $Q_3: Q_3^1 \& Q_3^2$, but only $Q_3^2$ can be used to reduce $Q_4$.
+%\begin{equation}
+%	\begin{aligned}\label{Ex2}
+%		&Q_1(...) = R_1(x,y,a), R_2(y,z,a) & Q-Hierarchical\\
+%		&Q_2(...) = R_2(y,z,a), R_3(z,w,a) & Q-Hierarchical\\
+%		&Q_3(...) =  R_1(x,y,a), R_2(y,z,a), R_3(z,w,a), R_0(a)& Non-Q-Hierarchical\\
+%		&Q_4(...) =  R_1(x,y,a), R_0(a),  R_4(y,b) & Non-Q-Hierarchical\\
+%		&&\\
+%		&Q_3^1(...) = VQ_1(...), R_3(z,w,a), R_0(a) & Q-Hierarchical\\
+%		&Q_3^2(...) = VQ_2(...), R_1(z,w,a), R_0(a) & Q-Hierarchical\\
+%		&&\\
+%		&Q_4^1(...) = VQ_3^2(...), R_4(y,b) & Q-Hierarchical\\
+%	\end{aligned}
+%\end{equation}
+%
+%A third proposed improvement was to remove q-hierarchical queries from the working set once they were compared to all non-q-hierarchical queries. Another counterexample exists: Example \ref{Ex3}: After a first iteration, $Q_3^1(...)  \& Q_3^3(...) $ are found, but another iteration with $Q_1(...)$ or $Q_2(...)$ is needed to find $Q_3^3(...)$.
+%
+%\begin{equation}
+%	\begin{aligned}\label{Ex3}
+%		&Q_1(...) = R_1(x,y), R_2(y,z) & Q-Hierarchical\\
+%		&Q_2(...) = R_3(a,b), R_3(b,c) & Q-Hierarchical\\
+%		&Q_3(...) =  R_1(x,y), R_2(y,z), R_3(z,a), R_3(a,b) & Non-Q-Hierarchical\\
+%		\\
+%		&Q_3^1(...) =  VQ_1(...), R_3(z,a), R_3(a,b) & Non-Q-Hierarchical\\
+%		&Q_3^0(...) =  R_1(x,y), R_2(y,z), VQ_2(...) & Non-Q-Hierarchical\\
+%		\\
+%		&Q_3^3(...) =   VQ_1(...), VQ_2(...) & Q-Hierarchical\\
+%	\end{aligned}
+%\end{equation}
+%
+%\paragraph{Algorithmic improvements}
+%To check the compatibility of a view and a query or if a query is q-hierarchical, an \textit{isSubset} computation is needed. by expressing the sets of relations as a bitset (thus integer), high-speed binary operations can be used. For large queries with many relations and views, the integers representing the bitsets will become very large and could again reduce performance.
+%
+%When checking if a query is q-hierarchical, the definition requires several conditions to hold for \textbf{every pair} of variables. This can be simplified to checking every combination of join variables for the hierarchical check and every combination of join variables $\cup$ free variables for the q-check.
+%
+%\section{Appendix}
+%\subsection{Complete}
+\begin{document}
+
+\begin{algorithm}
+	\caption{Cavir}\label{CAVIR}
+	\begin{algorithmic}[1]
+		\Function{Cascade}{queries: Set[Query]}
+			\State $\textit{h\_queries, non\_h\_queries} \gets \text{split(}\textit{queries}\text{)}$
+			\State $\textit{new\_h\_queries} \gets \text{set()}$
+			\State $\textit{new\_non\_h\_queries} \gets \text{set()}$
+			\State $\textit{past\_comparisons} \gets \text{set()}$
+			\While{$\textbf{True}$}
+				\For{$\textit{h\_query} \text{ in } \textit{h\_queries}$}
+					\For{$\textit{non\_h\_query} \text{ in } \textit{non\_h\_queries}$}
+						\If{$\text{(}\textit{h\_query, non\_h\_query}\text{) in } \textit{past\_comparisons}$}
+							\textbf{continue}
+						\Else
+							\State{$\textit{past\_comparisons}\text{.add((}\textit{h\_query, non\_h\_query}\text{))}$}
+						\EndIf
+						\If{$\textit{non\_h\_query}\text{.origin in }\textit{h\_query}\text{.dependant\_on()}$}
+							\State \textbf{continue}
+						\EndIf
+						
+						\If{$\text{atoms\_match(}\textit{h\_query, non\_h\_query}\text{)}$}
+							\If{$\text{is\_homomorphism(}\textit{h\_query, non\_h\_query}\text{)}$}
+								\If{$\text{free\_variables\_present(}\textit{h\_query, non\_h\_query}\text{)}$}
+									\State \textit{new\_query} \text{ = replace\_views(}\textit{h\_query, non\_h\_query}\text{)}
+									\If{$\textit{new\_query}\text{.is\_q\_hierarchical()}$}
+											\State $\textit{new\_h\_queries}\text{.add(}\textit{new\_query}\text{)}$
+									\Else
+											\State $\textit{new\_non\_h\_queries}\text{.add(}\textit{new\_query}\text{)}$
+									\EndIf
+								\EndIf
+							\EndIf
+						\EndIf
+		
+					\EndFor
+				\EndFor
+				\State $\textit{solution\_or\_none} \gets \text{complete\_solution(}\textit{h\_queries} \cup \textit{new\_h\_queries} )$
+				\If{$\textit{solution\_or\_none} $}
+					\State \textbf{return} \textit{solution\_or\_none}
+				\EndIf
+				\If{$\text{empty(}\textit{new\_h\_queries}) \wedge \text{empty(}\textit{new\_non\_h\_queries}) $}
+					\State	\textbf{return None}
+				\EndIf
+				\State $\textit{h\_queries}\text{.extend(}\textit{new\_h\_queries})$
+				\State $\textit{non\_h\_queries}\text{.extend(}\textit{new\_non\_h\_queries}\text{)}$
+			\EndWhile
+		\EndFunction
+	\end{algorithmic}
+\end{algorithm}
+
+\end{document}
+
