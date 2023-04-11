@@ -112,7 +112,7 @@
 							\State \textbf{continue}
 						\EndIf
 						
-						\If{$\text{atoms\_match(}\textit{h\_query, non\_h\_query}\text{)}$}
+						\If{$\text{relations\_match(}\textit{h\_query, non\_h\_query}\text{)}$}
 							\If{$\text{is\_homomorphism(}\textit{h\_query, non\_h\_query}\text{)}$}
 								\If{$\text{free\_variables\_present(}\textit{h\_query, non\_h\_query}\text{)}$}
 									\State \textit{new\_query} \text{ = replace\_views(}\textit{h\_query, non\_h\_query}\text{)}
@@ -140,6 +140,27 @@
 		\EndFunction
 	\end{algorithmic}
 \end{algorithm}
+
+\begin{section}{Definition of Cascading Q Hierarchical}
+	A set of conjunctive queries is Cascading Q Hierarchical iff there exists an execution order so that every query can be enumerated and updated with constant time delay with access to the complete $\And$ current enumeration of all previous queries in the execution order.
+	
+\end{section}
+
+\begin{section}{Prove of Completeness}
+	Contradiction: There exists a set of q-hierarchical queries Q and a set of non-q-hierarchical queries NQ where the non-q-hierarchical queries can be reduced to cascading q-hierarchical queries but Cavir cannot find it. There must exist a single non-q-hierarchical query $nq$ that can be reduced by a single q-hierarchical query $q$. As circular cascading is invalid at least on such pair must exist.
+	Cavir will have compared it a first time, thus it will not skip it in line 9.
+	For $q$ to be able to reduce $nq$, $q$ must not contain a view from $nq$ (non-circular), thus line 12 must be false.
+	As $q$ is defined to be able to reduce $nq$, the relations from $q$ must be contained in $nq$, it must be a homomorphism and the necessairy free variables for $nq$ must be present in $q$. Thus Cavir will find the unique reduction of $nq$ using $q$ contradicting the predicate.
+	Together with the prove of termination, this proves completness.
+	
+\end{section}
+\begin{section}{Prove of Termination}
+	Each query can only depend on each other query at most once. Thus there is only a finite number of intermediate queries and thus eventually no new queries are constructed and the algorithm will terminate	
+\end{section}
+\begin{section}{Prove of Correctness}
+	Each replacement of views leads to a valid query. As repeated replacements are valid, the resulting queries have to also be valid.
+\end{section}
+
 
 \end{document}
 
