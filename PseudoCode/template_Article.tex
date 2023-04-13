@@ -1,11 +1,13 @@
 \documentclass[]{article}
 \usepackage{amsmath}
 \usepackage{algorithm}
-\usepackage[noend]{algpseudocode}
+\usepackage{xcolor}
+\definecolor{grey}{gray}{0.6}
+\usepackage[commentColor=grey,indLines=false,rightComments=false]{algpseudocodex}
 \usepackage{graphicx}
 
 \makeatletter
-\def\BState{\State\hskip-\ALG@thistlm}
+
 \makeatother
 
 
@@ -90,6 +92,27 @@
 %
 %\section{Appendix}
 %\subsection{Complete}
+\pagenumbering{gobble}
+\newcommand\CONDITION[2]%
+{\begin{tabular}[t]{@{}l@{}l@{}}
+		#1&#2
+	\end{tabular}%
+}
+\algdef{SE}[WHILE]{While}{EndWhile}[1]%
+{\algorithmicwhile\ \CONDITION{#1}{\ \algorithmicdo}}%
+{\algorithmicend\ \algorithmicwhile}
+\algdef{SE}[FOR]{For}{EndFor}[1]%
+{\algorithmicfor\ \CONDITION{#1}{\ \algorithmicdo}}%
+{\algorithmicend\ \algorithmicfor}
+\algdef{S}[FOR]{ForAll}[1]%
+{\algorithmicforall\ \CONDITION{#1}{\ \algorithmicdo}}
+\algdef{SE}[REPEAT]{Repeat}{Until}{\algorithmicrepeat}[1]%
+{\algorithmicuntil\ \CONDITION{#1}{}}
+\algdef{SE}[IF]{If}{EndIf}[1]%
+{\algorithmicif\ \CONDITION{#1}{\ \algorithmicthen}}%
+{\algorithmicend\ \algorithmicif}%
+\algdef{C}[IF]{IF}{ElsIf}[1]%
+{\algorithmicelse\ \algorithmicif\ \CONDITION{#1}{\ \algorithmicthen}}
 \begin{document}
 
 \begin{algorithm}
@@ -102,38 +125,48 @@
 			\State $\textit{past\_comparisons} \gets \text{set()}$
 			\While{$\textbf{True}$}
 				\For{$\textit{h\_query} \text{ in } \textit{h\_queries}$}
+					\Comment{for every pair of h- and non-h-queries}
 					\For{$\textit{non\_h\_query} \text{ in } \textit{non\_h\_queries}$}
 						\If{$\text{(}\textit{h\_query, non\_h\_query}\text{) in } \textit{past\_comparisons}$}
-							\textbf{continue}
+							\State \textbf{continue}
+							\Comment{skip already searched comparisons}
 						\Else
 							\State{$\textit{past\_comparisons}\text{.add((}\textit{h\_query, non\_h\_query}\text{))}$}
 						\EndIf
 						\If{$\textit{non\_h\_query}\text{.origin in }\textit{h\_query}\text{.dependant\_on()}$}
 							\State \textbf{continue}
+							\Comment{Skip if h-query depends on non-h-query}
 						\EndIf
+						\State
+						\Comment{Check if h-query and non-h-query can be cascaded: Whether a sub-query of the non-h-query can be replaced by the h-query}
 						
-						\If{$\text{relations\_match(}\textit{h\_query, non\_h\_query}\text{)}$}
-							\If{$\text{is\_homomorphism(}\textit{h\_query, non\_h\_query}\text{)}$}
-								\If{$\text{free\_variables\_present(}\textit{h\_query, non\_h\_query}\text{)}$}
-									\State \textit{new\_query} \text{ = replace\_views(}\textit{h\_query, non\_h\_query}\text{)}
-									\If{$\textit{new\_query}\text{.is\_q\_hierarchical()}$}
-											\State $\textit{new\_h\_queries}\text{.add(}\textit{new\_query}\text{)}$
-									\Else
-											\State $\textit{new\_non\_h\_queries}\text{.add(}\textit{new\_query}\text{)}$
-									\EndIf
-								\EndIf
+						\Comment{is\_homomorphism checks whether the joinconditions in the h\_query are a subset of those in the non\_h\_query even if the variable names don't match}
+						
+						\Comment{free\_variable\_present verifies whether the variable in the h\_query that are free variables of the non\_h\_query and all join variable between the relation of the h\_query and the other relations of the non\_h\_query are free variables of the h\_query}
+						\If{$\text{relations\_match(}\textit{h\_query, non\_h\_query}\text{)} $\\$ \textbf{and}  \text{ is\_homomorphism(}\textit{h\_query, non\_h\_query}\text{)}$ \\ $\textbf{and}   \text{ free\_variables\_present(}\textit{h\_query, non\_h\_query}\text{)}$}
+
+							\State \textit{new\_query} \text{ = replace\_views(}\textit{h\_query, non\_h\_query}\text{)} 
+							\State \Comment{Add new query to the search queue}
+							\If{$\textit{new\_query}\text{.is\_q\_hierarchical()}$}
+									\State $\textit{new\_h\_queries}\text{.add(}\textit{new\_query}\text{)}$
+							\Else
+									\State $\textit{new\_non\_h\_queries}\text{.add(}\textit{new\_query}\text{)}$
 							\EndIf
+
 						\EndIf
 		
 					\EndFor
 				\EndFor
-				\State $\textit{solution\_or\_none} \gets \text{complete\_solution(}\textit{h\_queries} \cup \textit{new\_h\_queries} )$
-				\If{$\textit{solution\_or\_none} $}
-					\State \textbf{return} \textit{solution\_or\_none}
+				\State 
+				\Comment{complete\_solution selects a set of queries from h\_queries so that for each query in queries a single q-hierarchical reduction exists and each query is only dependant on queries within the selected set}
+				\If{($\textit{solution} \gets \text{complete\_solution(}\textit{h\_queries} \cup \textit{new\_h\_queries} ) )\neq None$}
+					\State \textbf{return} \textit{solution}
 				\EndIf
 				\If{$\text{empty(}\textit{new\_h\_queries}) \wedge \text{empty(}\textit{new\_non\_h\_queries}) $}
 					\State	\textbf{return None}
 				\EndIf
+				\State
+				\Comment{Solution not found, add new queries to the search queue}
 				\State $\textit{h\_queries}\text{.extend(}\textit{new\_h\_queries})$
 				\State $\textit{non\_h\_queries}\text{.extend(}\textit{new\_non\_h\_queries}\text{)}$
 			\EndWhile
@@ -142,23 +175,33 @@
 \end{algorithm}
 
 \begin{section}{Definition of Cascading Q Hierarchical}
-	A set of conjunctive queries is Cascading Q Hierarchical iff there exists an execution order so that every query can be enumerated and updated with constant time delay with access to the complete $\And$ current enumeration of all previous queries in the execution order.
+	A set of conjunctive queries is considered cascading q-hierarchical if there exists a partial order of the queries, such that they can be evaluated with constant update time under single-tuple updates, and the query results can be enumerated according to the partial order with constant time delay.
 	
 \end{section}
 
-\begin{section}{Prove of Completeness}
-	Contradiction: There exists a set of q-hierarchical queries Q and a set of non-q-hierarchical queries NQ where the non-q-hierarchical queries can be reduced to cascading q-hierarchical queries but Cavir cannot find it. There must exist a single non-q-hierarchical query $nq$ that can be reduced by a single q-hierarchical query $q$. As circular cascading is invalid at least on such pair must exist.
-	Cavir will have compared it a first time, thus it will not skip it in line 9.
-	For $q$ to be able to reduce $nq$, $q$ must not contain a view from $nq$ (non-circular), thus line 12 must be false.
-	As $q$ is defined to be able to reduce $nq$, the relations from $q$ must be contained in $nq$, it must be a homomorphism and the necessairy free variables for $nq$ must be present in $q$. Thus Cavir will find the unique reduction of $nq$ using $q$ contradicting the predicate.
+\begin{section}{Proof of Completeness}
+	Contradiction: There exists a set of q-hierarchical queries Q and a set of non-q-hierarchical queries NQ that together are Cascading Q Hierarchical but Cavier cannot find the partial order. There must exist a single non-q-hierarchical query $nq$ that together with a single q-hierarchical query $q$ form a cascading q-hierarchical set. As circular ordering is invalid at least on such pair must exist.
+	Cavier will have compared it a first time, thus it will not skip it in line 9.
+	For $q$ to be valid in replacing parts of $nq$, $q$ must not contain a view from $nq$ (non-circular), thus line 12 must be false.
+	As the set of $nq$ and $q$ is defined to be cascading q-hierarchical, the relations from $q$ must be contained in $nq$, it must be a homomorphism and the necessairy free variables for $nq$ must be present in $q$. Thus Cavier will find the partial order between $nq$ and $q$ contradicting the predicate.
 	Together with the prove of termination, this proves completness.
 	
 \end{section}
-\begin{section}{Prove of Termination}
+\begin{section}{Proof of Termination}
 	Each query can only depend on each other query at most once. Thus there is only a finite number of intermediate queries and thus eventually no new queries are constructed and the algorithm will terminate	
 \end{section}
-\begin{section}{Prove of Correctness}
-	Each replacement of views leads to a valid query. As repeated replacements are valid, the resulting queries have to also be valid.
+\begin{section}{Proof of Correctness}
+	Each replacement of relations in a query with the enumeration of another query produces a valid query, if the constraints of homomorphism and the free variables hold. As repeated replacements are valid, the resulting queries have to also be valid.
+\end{section}
+
+\begin{section}{Proof of Constant enumeration time of a set of Cascading Q-hierarichical Queries}
+A set of cascading Q-hierarchical queries can be enumerated in O(1) by executing them as follows:
+Following the partial order, a query can either be executed individually (not dependent on other queries) or by reusing a view on a previously executed query. By the Proof of Correctness, each query is Q-hierarchical when replacing relations with views on enumerated queries. To ensure that the enumerated query does not contain tuples that cannot be joined with the rest of the  remaining relations, the view is filtered during enumeration by joining it with the indicator projection of the next join with one of the remaining unreplaced relations. As this join can be executed in O(1), the asymptotic complexity remains the same. 
+If a query is based on multiple Views of enumerated queries, only for the second enumerated view filtering using indicator projections is possible. As the unfiltered enumerated query allows constant time lookup, O(1) can be maintained.
+\end{section}
+
+\begin{section}{Proof of  constant update time of a set of Cascading Q-hierarichical Queries}
+	On an update to a base relation, not all queries are updated eagerly. The updates are propagated until an enumeration step would be needed.
 \end{section}
 
 
