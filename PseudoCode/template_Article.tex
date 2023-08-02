@@ -116,7 +116,7 @@
 \begin{document}
 
 \begin{algorithm}
-	\caption{Cavir}\label{CAVIR}
+	\caption{Cavier}\label{CAVIER}
 	\begin{algorithmic}[1]
 		\Function{Cascade}{queries: Set[Query]}
 			\State $\textit{h\_queries, non\_h\_queries} \gets \text{split(}\textit{queries}\text{)}$
@@ -180,7 +180,7 @@
 \end{section}
 
 \begin{section}{Proof of Completeness}
-	Contradiction: There exists a set of q-hierarchical queries Q and a set of non-q-hierarchical queries NQ that together are Cascading Q Hierarchical but Cavier cannot find the partial order. There must exist a single non-q-hierarchical query $nq$ that together with a single q-hierarchical query $q$ form a cascading q-hierarchical set. As circular ordering is invalid at least on such pair must exist.
+	Contradiction: There exists a set of q-hierarchical queries Q and a set of non-q-hierarchical queries NQ that together are Cascading Q Hierarchical but Cavier cannot find the partial order. There must exist a single non-q-hierarchical query $nq$ that is dependant on a q-hierarchical query $q$. As circular ordering is invalid at least on such pair must exist.
 	Cavier will have compared it a first time, thus it will not skip it in line 9.
 	For $q$ to be valid in replacing parts of $nq$, $q$ must not contain a view from $nq$ (non-circular), thus line 12 must be false.
 	As the set of $nq$ and $q$ is defined to be cascading q-hierarchical, the relations from $q$ must be contained in $nq$, it must be a homomorphism and the necessairy free variables for $nq$ must be present in $q$. Thus Cavier will find the partial order between $nq$ and $q$ contradicting the predicate.

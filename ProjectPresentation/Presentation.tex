@@ -97,6 +97,7 @@
 
 %\usepackage{mathptmx} % Use the Times font for serif text
 \usepackage{palatino} % Use the Palatino font for serif text
+\usepackage{tikz}
 
 %\usepackage{helvet} % Use the Helvetica font for sans serif text
 \usepackage[default]{opensans} % Use the Open Sans font for sans serif text
@@ -142,13 +143,13 @@
 
 \title[CAVIR]{CAVIR} % The short title in the optional parameter appears at the bottom of every slide, the full title in the main parameter is only on the title page
 
-\subtitle{FIVM Extension} % Presentation subtitle, remove this command if a subtitle isn't required
+\subtitle{CAscading VIew tRees} % Presentation subtitle, remove this command if a subtitle isn't required
 
 \author[Johann Schwabe]{Johann Schwabe} % Presenter name(s), the optional parameter can contain a shortened version to appear on the bottom of every slide, while the main parameter will appear on the title slide
 
 \institute[UZH]{University of Zurich\\ \smallskip \textit{johann.schwabe@uzh.ch}} % Your institution, the optional parameter can be used for the institution shorthand and will appear on the bottom of every slide after author names, while the required parameter is used on the title slide and can include your email address or additional information on separate lines
 
-\date[\today]{Research Group Presentation \\ \today} % Presentation date or conference/meeting name, the optional parameter can contain a shortened version to appear on the bottom of every slide, while the required parameter value is output to the title slide
+\date[\today]{Master Thesis Defence \\ \today} % Presentation date or conference/meeting name, the optional parameter can contain a shortened version to appear on the bottom of every slide, while the required parameter value is output to the title slide
 
 %----------------------------------------------------------------------------------------
 
@@ -179,11 +180,11 @@
 %	PRESENTATION BODY SLIDES
 %----------------------------------------------------------------------------------------
 
-\section{FIVM} % Sections are added in order to organize your presentation into discrete blocks, all sections and subsections are automatically output to the table of contents as an overview of the talk but NOT output in the presentation as separate slides
+\section{Theory} % Sections are added in order to organize your presentation into discrete blocks, all sections and subsections are automatically output to the table of contents as an overview of the talk but NOT output in the presentation as separate slides
 
 %------------------------------------------------
 
-\subsection{Principles  of FIVM}
+\subsection{Foundations}
 \begin{frame}
 		\frametitle{FIVM}
 		\framesubtitle{Principles of FIVM}
@@ -206,7 +207,7 @@
 		\end{columns}
 
 \end{frame}
-\subsection{Query Classes}
+\subsection{Query Rewriting}
 \begin{frame}
 	\frametitle{Query Classes}
 	\framesubtitle{FIVM}
@@ -223,7 +224,7 @@
 	\end{block}
 	
 \end{frame}
-\subsection{Motivating Example}
+\subsection{F-IVM}
 \begin{frame}
 	\frametitle{Motivating Example}
 	\framesubtitle{FIVM}
@@ -259,7 +260,7 @@
 
 
 \section{CAVIR}
-\subsection{Valid Views}
+\subsection{Single Query Rewriting}
 \begin{frame}
 	\frametitle{Valid Views: Rule}
 	\framesubtitle{CAVIR}
@@ -312,7 +313,7 @@
 \end{frame}
 
 
-\subsection{Combining Queries}
+\subsection{Query Set Rewriting}
 \begin{frame}
 	\frametitle{Naive Idea}
 	\framesubtitle{CAVIR}
@@ -337,7 +338,7 @@
 	\end{block}
 \end{frame}
 
-\subsection{Examples}
+\subsection{Dynamic Evaluation using Cascading View Trees}
 \begin{frame}
 	\frametitle{Examples}
 	\framesubtitle{CAVIR}
@@ -356,39 +357,386 @@
 	\end{figure}
 \end{frame}
 
-\section{Open Problems}
-\subsection{Algorithmic}
+\section{Experiments}
+\subsection{Hypothesis}
 \begin{frame}
-	\frametitle{Open Algorithmic Problems}
+	\frametitle{Hypothesis}
 	\framesubtitle{Open Problems}
-	\begin{block}{Optimized Greedy}
-		Find correct query order / check some query orders
+	\begin{block}{Hypothesis 1 }\label{hyp:initialUpdate}
+		CaVieR outperforms F-IVM on Cascading Q-Hierarchical sets of queries with at least one non-q-hierarchical query by having a lower update time.
 	\end{block}
-	\begin{block}{Naive Solutions \& Greedy}
-		Nodes with many children have many views
+	
+	\begin{block}{Hypothesis 2}\label{hyp:initialEnumeration}
+		CaVieR outperforms F-IVM on Cascading Q-Hierarchical sets of queries with at least one non-q-hierarchical query by having a lower enumeration delay.
 	\end{block}
-	\begin{block}{Reverse Search}
-		Avoid enumeration of all views
-	\end{block}
+
 \end{frame}
-\subsection{Theoretical}
+
+
+\subsection{Experiments}
+\begin{frame}
+	\frametitle{Experiment 1: Overall Runtime}
+	\framesubtitle{Retailer}
+	\begin{figure}
+		\begin{minipage}{0.25\textwidth}
+			\scalebox{0.6}{
+				\begin{tikzpicture}[
+					level distance=2cm,
+					level 2/.style={sibling distance=1.7cm}]
+					\node {$RNQ_1$}
+					child {node {\footnotesize \texttt{Item}}}
+					child {node {$RQ_2$}
+						child {node {\footnotesize \texttt{Inventory}}}
+						child {node {\footnotesize \texttt{Location}}}
+						child {node {\footnotesize \texttt{Weather}}}
+					};
+					\node at (current bounding box.south)[below=20pt, text width=4cm, text centered]
+					{Dependency Graph};
+				\end{tikzpicture}
+			}
+		\end{minipage}
+		\begin{minipage}{0.74\textwidth}
+			\includegraphics[width=\linewidth]{Figures/hypothesis-retailer} % path to plot 1
+		\end{minipage}
+		\caption{Incremental maintenance of the results of the query set $\{RNQ_1,\ RQ_2\}$ over the {\em Retailer} dataset under updates of 1000 tuples to all relations. The updates do not follow any specific ordering. }
+	\end{figure}
+\end{frame}
 
 \begin{frame}
-	\frametitle{Open Theoretical Problems}
+	\frametitle{Experiment 1: Overall Runtime}
+	\framesubtitle{TPC-H}
+	\begin{figure}		
+		\begin{minipage}{0.25\textwidth}
+			\scalebox{0.6}{
+				\begin{tikzpicture}[
+					level distance=2.0cm,
+					level 2/.style={sibling distance=1.7cm}]
+					\node {$TNQ_4$}
+					child {node {\footnotesize \texttt{Orders}}}
+					child {node {$TQ_6$}
+						child {node {\footnotesize \texttt{Part}}}
+						child {node {\footnotesize \texttt{PartSupp}}}
+						child {node {\footnotesize \texttt{LineItem}}}
+					};
+					\node at (current bounding box.south)[below=20pt, text width=4cm, text centered]
+					{Dependency Graph};
+				\end{tikzpicture}
+			}
+		\end{minipage}
+		\begin{minipage}{0.74\textwidth}
+			\includegraphics[width=\linewidth]{Figures/hypothesis-tpch} % path to plot 1
+		\end{minipage}
+		\caption{Incremental maintenance of the results of the query set $\{TNQ_4,\ TQ_6\}$ over the {\em TPC-H} dataset.}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+
+	\frametitle{Experiment 1: Overall Runtime}
+	\framesubtitle{JCC-H}
+		\begin{figure}
+			\begin{minipage}{0.25\textwidth}
+				\scalebox{0.6}{
+					\begin{tikzpicture}[
+						level distance=2.0cm,
+						level 2/.style={sibling distance=1.7cm}]
+						\node {$JNQ_4$}
+						child {node {\footnotesize \texttt{Orders}}}
+						child {node {$JQ_6$}
+							child {node {\footnotesize \texttt{Part}}}
+							child {node {\footnotesize \texttt{PartSupp}}}
+							child {node {\footnotesize \texttt{LineItem}}}
+						};
+						\node at (current bounding box.south)[below=20pt, text width=4cm, text centered]
+						{Dependency Graph};
+					\end{tikzpicture}
+				}
+			\end{minipage}
+			\begin{minipage}{0.74\textwidth}
+				\includegraphics[width=\linewidth]{Figures/hypothesis-jcch} % path to plot 1
+			\end{minipage}
+		\caption{Incremental maintenance of the results of the query set  $\{JNQ_4,\ JQ_6\}$ over the  {\em JCC-H} dataset.
+			The results of the queries are enumerated after processing all updates.
+		}
+		\label{fig:hypothesis}
+	\end{figure}
+	
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{Experiment 2: Ordering the Data Stream}
+	\framesubtitle{TPC-H}
+	\begin{figure}
+
+
+		\begin{minipage}{0.25\textwidth}
+		\scalebox{0.6}{
+			\begin{tikzpicture}[
+				level distance=2.0cm,
+				level 2/.style={sibling distance=1.7cm}]
+				\node {$TNQ_4$}
+				child {node {\footnotesize \texttt{PartSupp}}}
+				child {node {$TQ_5$}
+					child {node {\footnotesize \texttt{Orders}}}
+					child {node {\footnotesize \texttt{LineItem}}}
+				}
+				child {node {\footnotesize \texttt{Part}}};
+				\node at (current bounding box.south)[below=20pt, text width=4cm, text centered]
+				{Dependency Graph};
+			\end{tikzpicture}
+		}
+		\end{minipage}
+		\begin{minipage}{0.74\textwidth}
+			\begin{figure}
+				\centering
+				\includegraphics[width=\linewidth]{Figures/OrderedVSUnordered.png}
+				
+			\end{figure}
+		\end{minipage}
+		\caption{Comparison of the overall update times between ordered and unordered input relations, illustrated using query set $\mathcal{S}_5 = \{TNQ_4,\ TQ_5\}$}
+		\label{fig:orderedVSunordered}
+	\end{figure}
+\end{frame}
+
+\subsection{}
+\begin{frame}
+	\frametitle{Experiment 3: Input Cardinalities}
+	\framesubtitle{TPC-H}
+	\begin{figure}
+
+		\begin{minipage}{0.25\textwidth}
+			\scalebox{0.6}{
+				\begin{tikzpicture}[
+					level distance=2.0cm,
+					level 2/.style={sibling distance=1.7cm}
+					]
+					\node (TNQ1) {$TNQ_1$}
+					child {node {\footnotesize \texttt{Part}}}
+					child {node (TQ) {TQ}
+						child {node {\footnotesize \texttt{Supplier}}}
+						child {node {\footnotesize \texttt{PartSupp}}}
+						child[dashed] {node (LineItem) {\footnotesize \texttt{LineItem}}}
+					};
+					\draw[dashed] (TNQ1) -- (LineItem) node[midway, above] {3};
+					\draw[dashed] (TQ) -- (LineItem) node[midway, left] {2};
+					\node at (current bounding box.south)[below=20pt, text width=4cm, text centered]
+					{Dependency Graph};
+				\end{tikzpicture}
+			}
+		\end{minipage}
+		\begin{minipage}{0.74\textwidth}
+			\begin{figure}
+				\centering
+				\includegraphics[width=\linewidth]{Figures/InputCardinalitiesTPCH.png}
+			\end{figure}
+		\end{minipage}
+	\caption{Illustrating the importance of the cardinalities of the individual relations on the update time of both queries in the query sets $\mathcal{S}_3 = \{TNQ_1, TQ_2\}$ \& $\mathcal{S}_4 = \{TNQ_1, TQ_3\}$ on the TPC-H dataset}
+\label{fig:inputCardinalitiesTpch}
+	\end{figure}
+\end{frame}
+
+\subsection{}
+\begin{frame}
+	\frametitle{Experiment 4: Number of Free Variables}
+	\framesubtitle{Retailer}
+	\begin{figure}
+		\begin{minipage}{0.25\textwidth}
+			\scalebox{0.6}{
+				\begin{tikzpicture}[
+					level distance=2.0cm,
+					level 2/.style={sibling distance=1.7cm}
+					]
+					\node (RNQ1) {$RNQ_1$}
+					child {node {\footnotesize \texttt{Item}}}
+					child {node (RQ2) {$RQ_2$}
+						child {node {\footnotesize \texttt{Inventory}}}
+						child {node {\footnotesize \texttt{Location}}}
+						child {node {\footnotesize \texttt{Weather}}}
+					};
+					\node at (current bounding box.south)[below=20pt, text width=4cm, text centered]
+					{Dependency Graph};
+				\end{tikzpicture}
+			}
+		\end{minipage}
+		\begin{minipage}{0.74\textwidth}
+			\begin{figure}
+				\centering
+				\includegraphics[width=\linewidth]{Figures/NrFreeVariables.png}
+			\end{figure}
+		\end{minipage}
+	\caption{Influence of the number of free non-join variables on the update time of F-IVM and CaVieR.}
+	\label{fig:NrFreeVars}
+	\end{figure}
+	
+\end{frame}
+
+\subsection{}
+\begin{frame}
+	\frametitle{Experiment 5: Influence of skewed Data}
+	\framesubtitle{TPC-H \& JCC-H}
+		\begin{figure}
+		\begin{minipage}{0.25\textwidth}
+			\scalebox{0.6}{
+				\begin{tikzpicture}[
+					level distance=2.0cm,
+					level 2/.style={sibling distance=1.7cm}
+					]
+					\node {$TNQ_4$}
+					child {node {\footnotesize \texttt{Part}}}
+					child {node {$TQ_5$}
+						child {node {\footnotesize \texttt{LineItem}}}
+						child {node {\footnotesize \texttt{Orders}}}
+					}
+					child {node {\footnotesize \texttt{PartSupp}}};
+					\node at (current bounding box.south)[below=20pt, text width=4cm, text centered]
+					{Dependency Graph};
+				\end{tikzpicture}
+			}
+		\end{minipage}
+		\begin{minipage}{0.74\textwidth}
+			\begin{figure}
+				\centering
+				\includegraphics[width=\linewidth]{Figures/TPCH_VS_JCCH.png}
+			\end{figure}
+		\end{minipage}
+		\caption{Comparing TPC-H against JCC-H using CaVieR and F-IVM.}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Experiment 6: Batch Update Sizes}
+	\framesubtitle{TPC-H}
+	\begin{figure}
+		\begin{minipage}{0.25\textwidth}
+			\scalebox{0.6}{
+				\begin{tikzpicture}[
+					level distance=2.0cm,
+					level 2/.style={sibling distance=1.7cm}
+					]
+					\node {$TNQ_1$}
+					child {node {\footnotesize \texttt{Part}}}
+					child {node {$TQ_2$}
+						child {node {\footnotesize \texttt{LineItem}}}
+						child {node {\footnotesize \texttt{Supplier}}}
+						child {node {\footnotesize \texttt{PartSupp}}}
+					}
+					\node at (current bounding box.south)[below=20pt, text width=4cm, text centered]
+					{Dependency Graph};
+				\end{tikzpicture}
+			}
+		\end{minipage}
+		\begin{minipage}{0.74\textwidth}
+			\begin{figure}
+				\centering
+				\includegraphics[width=\linewidth]{Figures/BatchSizes.png}
+			\end{figure}
+		\end{minipage}
+		\caption{Influence of batch sizes on update time. The batch size is given as the base 10 logarithm above each query.}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Experiment 7: Enumeration Delay}
+	\framesubtitle{TPC-He}
+		\begin{figure}
+		\begin{minipage}{0.25\textwidth}
+			\scalebox{0.6}{
+				\begin{tikzpicture}[
+				level distance=2.0cm,
+				level 2/.style={sibling distance=1.7cm}
+				]
+				\node {$TNQ_4$}
+				child {node {\footnotesize \texttt{Orders}}}
+				child {node {$TQ_6$}
+					child {node {\footnotesize \texttt{LineItem}}}
+					child {node {\footnotesize \texttt{Part}}}
+					child {node {\footnotesize \texttt{PartSupp}}}
+				}
+				child {node {\footnotesize \texttt{PartSupp}}};
+				\node at (current bounding box.south)[below=20pt, text width=4cm, text centered]
+				{Dependency Graph};
+			\end{tikzpicture}
+			}
+		\end{minipage}
+		\begin{minipage}{0.74\textwidth}
+			\begin{figure}
+				\centering
+				\includegraphics[width=\linewidth]{Figures/EnumerationTimes.png}
+			\end{figure}
+		\end{minipage}
+		\caption{Enumeration times of $TNQ_4$ \& $TQ_6$ compared between F-IVM and CaVieR.}
+	\end{figure}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{Experiment 8: Payload Data Structure}
 	\framesubtitle{Open Problems}
 	\begin{block}{Classification of Query sets}
 		Which sets of Queries are Cascading Q-Hierarchical
 	\end{block}
+\end{frame}
 
-	\begin{block}{Non Q-Hierarchical Base Queries}
-		\begin{enumerate}
-			\item Use Q-Hierarchical Views from Non Q-Hierarchical Queries
-			\item Target Cascading Hierarchical reductions
-			\item Target any reductions
-		\end{enumerate}
+
+\begin{frame}
+	\frametitle{Experiment 9: Many Queries}
+	\framesubtitle{Open Problems}
+	\begin{block}{Classification of Query sets}
+		Which sets of Queries are Cascading Q-Hierarchical
 	\end{block}
 \end{frame}
 
+\section{Conclusion}
+\subsection{Key Findings}
+\begin{frame}
+	\frametitle{Update Time}
+	\framesubtitle{Open Problems}
+	\begin{block}{Classification of Query sets}
+		Which sets of Queries are Cascading Q-Hierarchical
+	\end{block}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Enumeration Delay}
+	\framesubtitle{Open Problems}
+	\begin{block}{Classification of Query sets}
+		Which sets of Queries are Cascading Q-Hierarchical
+	\end{block}
+\end{frame}
+
+\subsection{Future Work}
+\begin{frame}
+	\frametitle{Comparing Rewritings}
+	\framesubtitle{Open Problems}
+	\begin{block}{Classification of Query sets}
+		Which sets of Queries are Cascading Q-Hierarchical
+	\end{block}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Cascading Non-Q-Hierarchical View Trees}
+	\framesubtitle{Open Problems}
+	\begin{block}{Classification of Query sets}
+		Which sets of Queries are Cascading Q-Hierarchical
+	\end{block}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Alternative Tree Combination Methods}
+	\framesubtitle{Open Problems}
+	\begin{block}{Classification of Query sets}
+		Which sets of Queries are Cascading Q-Hierarchical
+	\end{block}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Delta Enumerations}
+	\framesubtitle{Open Problems}
+	\begin{block}{Classification of Query sets}
+		Which sets of Queries are Cascading Q-Hierarchical
+	\end{block}
+\end{frame}
 %----------------------------------------------------------------------------------------
 %	CLOSING SLIDE
 %----------------------------------------------------------------------------------------
