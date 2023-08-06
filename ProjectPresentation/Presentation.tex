@@ -190,17 +190,17 @@
 		\framesubtitle{Principles of FIVM}
 
 
-		$Q_1(a, b, c) = R_1(a, b), R_2(b, c), R_3(a, b, d)$
+		$Q_1(y,z) = R_1(x, y), R_2(y,z,w,v), R_3(y,w)$
 		\begin{columns}[c] 
 			\begin{column}{0.45\textwidth} 
 				\begin{figure}
-					\includegraphics[height=0.6\textheight]{VariableOrder.pdf}
+					\includegraphics[height=0.5\textheight]{Figures/variable_order.pdf}
 					\caption{Variable Order}
 				\end{figure}
 			\end{column}
 			\begin{column}{0.45\textwidth} 
 				\begin{figure}
-					\includegraphics[height=0.6\textheight]{ViewTree.pdf}
+					\includegraphics[height=0.5\textheight]{Figures/optimized_viewtree.pdf}
 					\caption{View Tree}
 				\end{figure}
 			\end{column}
@@ -210,7 +210,7 @@
 \subsection{Query Rewriting}
 \begin{frame}
 	\frametitle{Query Classes}
-	\framesubtitle{FIVM}
+	\framesubtitle{F-IVM}
 	Complexity of Conjunctive Queries:
 	\begin{align*}
 		Preprocessing & & O(N^w) \\
@@ -222,131 +222,82 @@
 	\begin{block}{Q-Hierarchical}
 		$w = 1, \delta=0$ 
 	\end{block}
-	
 \end{frame}
 \subsection{F-IVM}
 \begin{frame}
 	\frametitle{Motivating Example}
-	\framesubtitle{FIVM}
-	$Q_1(a, b, c) = R_1(a,b), R_2(b,c)$\\
-	$Q_2(a, b, c, d) = R_1(a,b), R_2(b,c), R_3(c,d)$
-		\begin{figure}
-		\includegraphics[height=0.6\textheight]{PreCascadingEx.pdf}
-		\caption{View Tree Source Queries}
-	\end{figure}
-\end{frame}
-\begin{frame}
-	\frametitle{Motivating Example}
-	\framesubtitle{FIVM}
-	$Q_1(a, b, c) = R_1(a,b), R_2(b,c)$\\
-	$Q_2(a, b, c, d) = R_1(a,b), R_2(b,c), R_3(c,d)$
-	\begin{figure}
-		\includegraphics[height=0.6\textheight]{CascadingEx.pdf}
-		\caption{View Tree Cascading}
-	\end{figure}
+	\framesubtitle{CaVieR}
+	\begin{align*}
+		Q_1(y,z) =&\ R_1(x, y), R_2(y,z,w,v), R_3(y,w)\\
+		Q_2(y,w,z) =&\ R_2(y,z,w,v), R_3(y,w)\\\\
+		Q_1'(y,z) =&\ Q_2(y,w,z), R_1(x, y)
+	\end{align*}
 \end{frame}
 
 \begin{frame}
 	\frametitle{Motivating Example II}
-	\framesubtitle{FIVM}
-	$Q_1(a, b, c) = R_1(a,b), R_2(b,c), R_4(b,e)$\\
-	$Q_2(a, b, c, d) = R_1(a,b), R_2(b,c), R_3(c,d)$\\
-	$Q_3(a,b,e,f) = R_1(a,b), R_4(b,e), R_5(e,f)$
-	\begin{figure}
-		\includegraphics[width=1.05\linewidth, trim=0 2cm 0 2cm]{PartitionViewExample.pdf}
-		\caption{View Tree with partial view}
-	\end{figure}
+	\framesubtitle{CaVieR}
+	\begin{columns}
+		\begin{column}{0.3\textwidth}
+			\begin{align*}
+				Q_1 &= R_1, R_2, R_3, R_4, R_5\\
+				Q_2 &= R_1, R_2, R_3\\
+				Q_3 &= R_2, R_3\\
+				Q_4 &= R_3, R_4, R_5\\
+				Q_5 &= R_3, R_4
+			\end{align*}
+		\end{column}
+		
+		\begin{column}{0.7\textwidth}
+			\begin{figure}
+           	 	\includegraphics[width=0.76\linewidth, trim=0 1.5cm 0 1.5cm, clip]{Figures/Viz_DoubleR3.pdf}
+			\end{figure}
+		\end{column}
+		
+	\end{columns}
 \end{frame}
+
 
 
 \section{CAVIR}
-\subsection{Single Query Rewriting}
+\subsection{Algorithm}
 \begin{frame}
-	\frametitle{Valid Views: Rule}
-	\framesubtitle{CAVIR}
-	\begin{block}{Valid Views}
-		At each Variable Order Node, any permutation of child nodes / relations and their complete subtree is valid.\\
-		This ensures that
+	\frametitle{CaVieR }
+	\framesubtitle{Structure}
+	\begin{block}{Parts}
 		\begin{enumerate}
-			\item The views can be used to efficiently update the original query
-			\item The views are not larger than the original query
+			\item Q-Hierarchical Rewriting
+			\begin{enumerate}
+				\item Single Query Rewriting
+				\item Query Set Rewriting
+			\end{enumerate}
+			\item Combined View Tree
+			\item Dynamic Evaluation
 		\end{enumerate}
 	\end{block}
 \end{frame}
-\begin{frame}
-	\frametitle{Valid Views}
-	\framesubtitle{CAVIR}
-	$Q_1(a, b, c, d, e) = R_1(a, b, c), R_2(a, b, d), R_3(a, e)$
-\begin{columns}[c] 
-	\begin{column}{0.5\textwidth} 
-		$V_1(a, b, c, d) = R_1(a, b, c), R_2(a, b, d)$ \\
-		$V_2(a, b, c, e) = R_1(a,b, c), R_3(a, e)$
-		$V_3(a, b ,d ,e) = R_2(a, b ,d), R_3(a, e)$
-	\end{column}
-	\begin{column}{0.45\textwidth} 
-		\begin{figure}
-			\includegraphics[height=0.4\textheight, trim=0 2cm 0 3cm]{NonValidView.pdf}
-			\caption{View R1, R3 is not valid}
-		\end{figure}
-	\end{column}
-\end{columns}
-\end{frame}
-\begin{frame}
-	\frametitle{Valid Views: Example}
-	\framesubtitle{CAVIR}
-	\begin{columns}[c] 
-		\begin{column}{0.5\textwidth} 
-			$V_1= R_1, R_2$ \\
-			$V_2= R_1, R_3, R_5$ \\
-			$V_3 = R_1, R_2, R_3, R_5$ \\
-			$V_4 = R_3, R_5$ \\
-			$...$
-		\end{column}
-		\begin{column}{0.45\textwidth} 
-			\begin{figure}
-				\includegraphics[height=0.6\textheight]{BigViewEx.png}
-				\caption{$Q(x,y,a,b,c,d) = R_1(x,y), R_2(x,y), R_3(x,y,a), R_4(x,y,b), R_5(x,y,a,c),R_6(x,y,b,d)$}
-			\end{figure}
-		\end{column}
-	\end{columns}
 
-\end{frame}
-
-
-\subsection{Query Set Rewriting}
 \begin{frame}
-	\frametitle{Naive Idea}
-	\framesubtitle{CAVIR}
-	\begin{figure}
-		\includegraphics[height=0.7\textheight]{Naive.png}
-		\caption{Naive Comparison}
-	\end{figure}
-\end{frame}
-\begin{frame}
-	\frametitle{Greedy}
-	\framesubtitle{CAVIR}
-		\begin{figure}
-		\includegraphics[height=0.7\textheight]{Greedy.png}
-		\caption{Greedy Comparison}
-	\end{figure}
-\end{frame}
-\begin{frame}
-	\frametitle{Reverse Search}
-	\framesubtitle{CAVIR}
-	\begin{block}{Reverse Search}
-		Compute View-Patterns that could make a Non-Q-Hierarchical Query Q-Hierarchical. Then search for those in Q-Hierarchical Queries!
+	\frametitle{CaVieR}
+	\framesubtitle{Q-Hierarchical Rewriting}
+	\begin{block}{Cascading Q-Hierarchical}
+	    A set of queries $\mathbf{Q}$ is called Cascading Q-Hierarchical if for $Q \in \mathbf{Q}$ there exists a q-hierarchical $\mathcal{Q}$-rewriting for $\mathcal{Q} = \bigcup_{view \in \mathbf{Q}}body(view) \cup \mathbf{Q}\setminus Q$.
 	\end{block}
 \end{frame}
 
-\subsection{Dynamic Evaluation using Cascading View Trees}
 \begin{frame}
-	\frametitle{Examples}
-	\framesubtitle{CAVIR}
+	\frametitle{CaVieR}
+	\framesubtitle{Single Query Rewriting}
 	\begin{figure}
-		\includegraphics[width=\linewidth]{Ex1.pdf}
-		\caption{Example 1}
+		\begin{align*}
+			Q_1(y,z) =&\ R_1(x, y), R_2(y,z,w,v), R_3(y,w)\\
+			Q_2(y,w,z) =&\ R_2(y,z,w,v), R_3(y,w)\\\\
+			Q_1'(y,z) =&\ Q_2(y,w,z), R_1(x, y)
+		\end{align*}
 	\end{figure}
 \end{frame}
+
+\subsection{Dynamic Evaluation using Cascading View Trees}
 
 \begin{frame}
 	\frametitle{Examples: Many Children}
@@ -361,7 +312,7 @@
 \subsection{Hypothesis}
 \begin{frame}
 	\frametitle{Hypothesis}
-	\framesubtitle{Open Problems}
+	\framesubtitle{Working Hypothesis}
 	\begin{block}{Hypothesis 1 }\label{hyp:initialUpdate}
 		CaVieR outperforms F-IVM on Cascading Q-Hierarchical sets of queries with at least one non-q-hierarchical query by having a lower update time.
 	\end{block}
@@ -499,6 +450,18 @@
 	\end{figure}
 \end{frame}
 
+\begin{frame}
+	\frametitle{Hypothesis}
+	\framesubtitle{Working Hypothesis}
+	\begin{block}{Hypothesis 3}
+			CaVieR outperforms F-IVM on Cascading Q-Hierarchical sets of queries with at least one non-q-hierarchical query and \textbf{unordered} input relations by having a lower update time.
+	\end{block}
+		\begin{block}{Hypothesis 2}
+		CaVieR outperforms F-IVM on Cascading Q-Hierarchical sets of queries with at least one non-q-hierarchical query by having a lower enumeration delay.
+	\end{block}
+	
+\end{frame}
+
 \subsection{}
 \begin{frame}
 	\frametitle{Experiment 3: Input Cardinalities}
@@ -620,7 +583,7 @@
 						child {node {\footnotesize \texttt{LineItem}}}
 						child {node {\footnotesize \texttt{Supplier}}}
 						child {node {\footnotesize \texttt{PartSupp}}}
-					}
+					};
 					\node at (current bounding box.south)[below=20pt, text width=4cm, text centered]
 					{Dependency Graph};
 				\end{tikzpicture}
@@ -638,7 +601,7 @@
 
 \begin{frame}
 	\frametitle{Experiment 7: Enumeration Delay}
-	\framesubtitle{TPC-He}
+	\framesubtitle{TPC-H}
 		\begin{figure}
 		\begin{minipage}{0.25\textwidth}
 			\scalebox{0.6}{
@@ -652,6 +615,38 @@
 					child {node {\footnotesize \texttt{LineItem}}}
 					child {node {\footnotesize \texttt{Part}}}
 					child {node {\footnotesize \texttt{PartSupp}}}
+				};
+				\node at (current bounding box.south)[below=20pt, text width=4cm, text centered]
+				{Dependency Graph};
+			\end{tikzpicture}
+			}
+		\end{minipage}
+		\begin{minipage}{0.74\textwidth}
+			\begin{figure}
+				\centering
+				\includegraphics[width=0.7\linewidth]{Figures/EnumerationTimes.png}
+			\end{figure}
+		\end{minipage}
+		\caption{Enumeration times of $TNQ_4$ \& $TQ_6$ compared between F-IVM and CaVieR.}
+	\end{figure}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{Experiment 8: Payload Data Structure}
+	\framesubtitle{TPC-H}
+	\begin{figure}
+		\begin{minipage}{0.25\textwidth}
+			\scalebox{0.6}{
+			\begin{tikzpicture}[
+				level distance=2.0cm,
+				level 2/.style={sibling distance=1.7cm}
+				]
+				\node {$TNQ_4$}
+				child {node {\footnotesize \texttt{Part}}}
+				child {node {$TQ_5$}
+					child {node {\footnotesize \texttt{LineItem}}}
+					child {node {\footnotesize \texttt{Orders}}}
 				}
 				child {node {\footnotesize \texttt{PartSupp}}};
 				\node at (current bounding box.south)[below=20pt, text width=4cm, text centered]
@@ -662,79 +657,99 @@
 		\begin{minipage}{0.74\textwidth}
 			\begin{figure}
 				\centering
-				\includegraphics[width=\linewidth]{Figures/EnumerationTimes.png}
+				\includegraphics[width=\linewidth]{Figures/MapTypes_tpch.png}
 			\end{figure}
 		\end{minipage}
-		\caption{Enumeration times of $TNQ_4$ \& $TQ_6$ compared between F-IVM and CaVieR.}
+		\caption{Comparison of update time \& enumeration delay of the different payload map types on a TPC-H query.}
 	\end{figure}
 \end{frame}
 
 
 \begin{frame}
-	\frametitle{Experiment 8: Payload Data Structure}
-	\framesubtitle{Open Problems}
-	\begin{block}{Classification of Query sets}
-		Which sets of Queries are Cascading Q-Hierarchical
-	\end{block}
-\end{frame}
-
-
-\begin{frame}
 	\frametitle{Experiment 9: Many Queries}
-	\framesubtitle{Open Problems}
-	\begin{block}{Classification of Query sets}
-		Which sets of Queries are Cascading Q-Hierarchical
-	\end{block}
+	\framesubtitle{TPC-H}
+	\begin{figure}
+		\centering
+		\includegraphics[width=0.6\linewidth]{Figures/LargeExample.png}
+	\end{figure}
 \end{frame}
 
 \section{Conclusion}
 \subsection{Key Findings}
 \begin{frame}
-	\frametitle{Update Time}
-	\framesubtitle{Open Problems}
-	\begin{block}{Classification of Query sets}
-		Which sets of Queries are Cascading Q-Hierarchical
+	\frametitle{Key Findings}
+	\framesubtitle{Update Time}
+	\begin{block}{Data Stream Ordering}
+		If the tuples in an update batch share their free variables, the cardinality of the update reduces.
+	\end{block}
+	\begin{block}{Input Cardinalities}
+		If the cardinalities of the relations streamed is unbalanced, reusing the high workload joins is more effective than reusing fast joins.
+	\end{block}
+	\begin{block}{Free Variables}
+		If the cardinalities of the relations streamed is unbalanced, reusing the high workload joins is more effective than reusing fast joins.
 	\end{block}
 \end{frame}
 
 \begin{frame}
-	\frametitle{Enumeration Delay}
-	\framesubtitle{Open Problems}
-	\begin{block}{Classification of Query sets}
-		Which sets of Queries are Cascading Q-Hierarchical
+	\frametitle{Key Findings}
+	\framesubtitle{Enumeration Delay}
+	\begin{block}{Number of Views}
+		Using CaVieR, the number of views is smaller or equal to those needed by F-IVM. Thus CaVieR can enumerate the result at least as fast.
 	\end{block}
 \end{frame}
 
 \subsection{Future Work}
 \begin{frame}
-	\frametitle{Comparing Rewritings}
-	\framesubtitle{Open Problems}
-	\begin{block}{Classification of Query sets}
-		Which sets of Queries are Cascading Q-Hierarchical
+	\frametitle{Future Work }
+	\framesubtitle{Comparing Rewritings}
+	\begin{align*}
+		Q_1(x,y,z,w) =&  R_1(x,y), R_2(y,z), R_3(z,w)\\
+		Q_2(x,y,z) =&  R_1(x,y), R_2(y,z)\\
+		Q_3(y,z,w)=&  R_2(y,z), R_3(z,w)\\\\
+		Q_1'(x,y,z,w) =& Q_2(x,y,z), R_3(z,w)\\
+		Q_1''(x,y,z,w) =&  R_1(x,y), Q_3(y,z,w)\\
+		Q_1'''(x,y,z,w) =&  Q_2(x,y,z), Q_3(y,z,w)
+	\end{align*}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Future Work}
+	\framesubtitle{Cascading Non-Q-Hierarchical View Trees}
+	\begin{block}{Rewrite any Queries if possible}
+		\begin{enumerate}
+			\item More flexibility
+			\item Complex Rewriting selection
+			\item No asymptotic gains
+		\end{enumerate}
 	\end{block}
 \end{frame}
 
 \begin{frame}
-	\frametitle{Cascading Non-Q-Hierarchical View Trees}
-	\framesubtitle{Open Problems}
-	\begin{block}{Classification of Query sets}
-		Which sets of Queries are Cascading Q-Hierarchical
+	\frametitle{Future Work}
+	\framesubtitle{Alternative Tree Combination Methods}
+	\begin{block}{Reuse shared subtrees without enumeration}
+		\begin{enumerate}
+			\item Does not reduce asymptotic complexity.
+			\item Exactly match the free \& lifted variables
+			\item Simple
+		\end{enumerate}
+	\end{block}
+	
+		\begin{block}{Reuse shared subtrees with enumeration}
+		\begin{enumerate}
+			\item Requires enumeration of partial viewtree
+			\item More flexibility in the free variables
+			\item Difficulte performance estimation
+		\end{enumerate}
 	\end{block}
 \end{frame}
 
 \begin{frame}
-	\frametitle{Alternative Tree Combination Methods}
-	\framesubtitle{Open Problems}
-	\begin{block}{Classification of Query sets}
-		Which sets of Queries are Cascading Q-Hierarchical
-	\end{block}
-\end{frame}
-
-\begin{frame}
-	\frametitle{Delta Enumerations}
-	\framesubtitle{Open Problems}
-	\begin{block}{Classification of Query sets}
-		Which sets of Queries are Cascading Q-Hierarchical
+	\frametitle{Future Work}
+	\framesubtitle{Delta Enumerations}
+	\begin{block}{Enumerate \& Propagate only the change}
+		On each enumeration request only enumerate the new tuples \& add them to previous enumeration requests.
+		This accellerates both F-IVM \& CaVieR.
 	\end{block}
 \end{frame}
 %----------------------------------------------------------------------------------------
