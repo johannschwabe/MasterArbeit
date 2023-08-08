@@ -98,11 +98,8 @@
 %\usepackage{mathptmx} % Use the Times font for serif text
 \usepackage{palatino} % Use the Palatino font for serif text
 \usepackage{tikz}
-\usetikzlibrary{fadings}
-\tikzfading[name=fade left,
-right color=transparent!100, left color=transparent!0]
-\definecolor{transparent}{RGB}{255,255,255}
-
+\usepackage{algorithm}
+\usepackage[commentColor=grey,indLines=false,rightComments=false,noEnd=true]{algpseudocodex}
 \usepackage{helvet} % Use the Helvetica font for sans serif text
 %\usepackage[default]{opensans} % Use the Open Sans font for sans serif text
 %\usepackage[default]{FiraSans} % Use the Fira Sans font for sans serif text
@@ -187,7 +184,7 @@ right color=transparent!100, left color=transparent!0]
 \section{Introduction}
 \begin{frame}
 	\frametitle{Introduction}
-	\framesubtitle{Real time monitoring}
+	\framesubtitle{Real time data analytics}
 	\begin{tikzpicture}[remember picture,overlay]
 		\node[anchor=south west, yshift=0cm] at (current page.south west) {\includegraphics[width=\paperwidth,trim={0 0 0 1.5cm},clip]{Figures/IntroStart.pdf}};
 	\end{tikzpicture}
@@ -195,14 +192,14 @@ right color=transparent!100, left color=transparent!0]
 
 \begin{frame}
 	\frametitle{Introduction}
-	\framesubtitle{Real time monitoring}
+	\framesubtitle{Naive Approach}
 	\begin{tikzpicture}[remember picture,overlay]
 		\node[anchor=south west, yshift=0cm] at (current page.south west) {\includegraphics[width=\paperwidth,trim={0 0 0 1.5cm},clip]{Figures/IntroNaive.pdf}};
 	\end{tikzpicture}
 \end{frame}
 \begin{frame}
 	\frametitle{Introduction}
-	\framesubtitle{Real time monitoring}
+	\framesubtitle{Classical IVM}
 	\begin{tikzpicture}[remember picture,overlay]
 		\node[anchor=south west, yshift=0cm] at (current page.south west) {\includegraphics[width=\paperwidth,trim={0 0 0 1.5cm},clip]{Figures/IntroClassical.pdf}};
 	\end{tikzpicture}
@@ -210,7 +207,7 @@ right color=transparent!100, left color=transparent!0]
 
 \begin{frame}
 	\frametitle{Introduction}
-	\framesubtitle{Real time monitoring}
+	\framesubtitle{DBToaster}
 	\begin{tikzpicture}[remember picture,overlay]
 		\node[anchor=south west, yshift=0cm] at (current page.south west) {\includegraphics[width=\paperwidth,trim={0 0 0 1.5cm},clip]{Figures/IntroDBToaster.pdf}};
 	\end{tikzpicture}
@@ -218,7 +215,7 @@ right color=transparent!100, left color=transparent!0]
 
 \begin{frame}
 	\frametitle{Introduction}
-	\framesubtitle{Real time monitoring}
+	\framesubtitle{F-IVM}
 	\begin{tikzpicture}[remember picture,overlay]
 		\node[anchor=south west, yshift=0cm] at (current page.south west) {\includegraphics[width=\paperwidth,trim={0 0 0 1.5cm},clip]{Figures/IntroFIVM.pdf}};
 	\end{tikzpicture}
@@ -226,236 +223,45 @@ right color=transparent!100, left color=transparent!0]
 
 \begin{frame}
 	\frametitle{Introduction}
-	\framesubtitle{Real time monitoring}
+	\framesubtitle{Improving performance by joined query maintenance}
 	\begin{tikzpicture}[remember picture,overlay]
-		\node[anchor=south west, yshift=0cm] at (current page.south west) {\includegraphics[width=\paperwidth,trim={0 0 0 1.5cm},clip]{Figures/IntroCavier.pdf}};
+		\node[anchor=south west, yshift=0cm] at (current page.south west) {\includegraphics[width=\paperwidth,trim={0 0 0 1.5cm},clip]{Figures/IntroCavierI.pdf}};
+	\end{tikzpicture}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Introduction}
+	\framesubtitle{CaVieR}
+	\begin{tikzpicture}[remember picture,overlay]
+		\node[anchor=south west, yshift=0cm] at (current page.south west) {\includegraphics[width=\paperwidth,trim={0 0 0 1.5cm},clip]{Figures/IntroCavierII.pdf}};
 	\end{tikzpicture}
 \end{frame}
 
 
+\section{Foundations} 
 \begin{frame}
-		\vspace{-0.2cm}
-	\begin{figure}
-		\frametitle{Introduction}
-		\framesubtitle{Development of IVM: Optimizing for individual queries}
-		\begin{tikzpicture}[scale=0.54, transform shape, level distance=1.5cm,
-			level 1/.style={sibling distance=1cm},
-			level 2/.style={sibling distance=0.55cm},
-			]
-			
-			\node at (-3,-1) {\textbf{Classical IVM}};
-			\node at (2,0.6) {$\textbf{Q}_1$};
-			\node at (10.5,0.6) {$\textbf{Q}_2$};
-			
-			\node at (0,0) {$\delta \text{Q}^R_1$}[level 1/.style={sibling distance=0.75cm}]
-			child {node {$\delta$R}}
-			child {node {S}}
-			child {node {T}}
-			child {node {U}};
-			
-			\node at (2,-1) {$\dots$};
-			
-			\node at (4,0) {$\delta \text{Q}^U_1$}[level 1/.style={sibling distance=0.75cm}]
-			child {node {R}}
-			child {node {S}}
-			child {node {T}}
-			child {node {$\delta$U}};
-			
-			\draw[->, thick] (2,-2) -- ++(0,-1);
-			\node at (-3, -5){\textbf{DBToaster}};
-			
-			\node at (0,-3.5) {$\delta \text{Q}^R_1$}[level 1/.style={sibling distance=1.5cm}]
-			child {node {$\delta V_{\text{RS}}$}
-				child {node {$\delta\text{R}$}}
-				child {node {S}}
-			}
-			child {node {$V_{\text{TU}}$}
-				child {node {T}}
-				child {node {U}}
-			};
-			
-			\node at (2,-5) {$\dots$};
-			
-			
-			\node at (4,-3.5) {$\delta \text{Q}^U_1$}[level 1/.style={sibling distance=1.5cm}]
-			child {node {$V_{\text{RS}}$}
-				child {node {R}}
-				child {node {S}}
-			}
-			child {node {$\delta V_{\text{TU}}$}
-				child {node {T}}
-				child {node {$\delta\text{U}$}}
-			};
-			%-----
-			
-			\node at (8,0) {$\delta \text{Q}^R_2$}[level 1/.style={sibling distance=0.75cm}]
-			child {node {$\delta$R}}
-			child {node {S}}
-			child {node {T}}
-			child {node {U}}
-			child {node {W}};
-			
-			\node at (10.5,-1) {$\dots$};
-			
-			\node at (13,0) {$\delta \text{Q}^W_2$}[level 1/.style={sibling distance=0.75cm}]
-			child {node {R}}
-			child {node {S}}
-			child {node {T}}
-			child {node {U}}
-			child {node {$\delta$W}};
-			
-			\draw[->, thick] (10.5,-2) -- ++(0,-1);
-			
-			\node at (8,-3.5) {$\delta \text{Q}^R_2$}[level 1/.style={sibling distance=1.5cm}]
-			child {node {$\delta V_{\text{RS}}$}
-				child {node {$\delta\text{R}$}}
-				child {node {S}}
-			}
-			child {node {$V_{\text{TU}}$}
-				child {node {T}}
-				child {node {U}}
-			}
-			child {node {W}};
-			
-			\node at (10.5,-5) {$\dots$};
-			
-			
-			\node at (13,-3.5) {$\delta \text{Q}^W_2$}[level 1/.style={sibling distance=1.5cm}]
-			child {node {$V_{\text{RS}}$}
-				child {node {R}}
-				child {node {S}}
-			}
-			child {node {$V_{\text{TU}}$}
-				child {node {T}}
-				child {node {U}}
-			}
-			child {node {$\delta\text{W}$}};
-			
-			\draw[->, thick] (0,-7) -- ++(1.75,-1.5);
-			\draw[->, thick] (4,-7) -- ++(-1.9,-1.5);
-			\draw[->, thick] (8,-7) -- ++(2.3,-1.5);
-			\draw[->, thick] (13,-7) -- ++(-2.3,-1.5);
-			
-			
-			\node at (-3, -10.75){\textbf{F-IVM}};
-			
-			
-			\node at (2,-9.5) {$\delta \text{Q}_1$}[level 1/.style={sibling distance=2cm},level 2/.style={sibling distance=1.25cm}]
-			child {node {$\delta V_{\text{RS}}$}
-				child {node {$\delta\text{R}$}}
-				child {node {$\delta\text{S}$}}
-			}
-			child {node {$\delta V_{\text{TU}}$}
-				child {node {$\delta\text{T}$}}
-				child {node {$\delta\text{U}$}}
-			};
-			
-			\node at (10.5,-9.5) {$\delta \text{Q}_2$}[level 1/.style={sibling distance=2cm},level 2/.style={sibling distance=1.25cm}]
-			child {node {$\delta V_{\text{RS}}$}
-				child {node {$\delta\text{R}$}}
-				child {node {$\delta\text{S}$}}
-			}
-			child {node {$\delta V_{\text{TU}}$}
-				child {node {$\delta\text{T}$}}
-				child {node {$\delta\text{U}$}}
-			}
-			child {node {$\delta \text{W}$}};
-		\end{tikzpicture}
-	\end{figure}
+	\frametitle{Foundation}
+	\framesubtitle{Query Rewriting}
+		\begin{align*}
+			Q_2(y,z) =&\ R_1(x, y), R_2(y,z,w,v), R_3(y,w)\\
+			Q_1(y,w,z) =&\ R_2(y,z,w,v), R_3(y,w)\\
+%			Q_1'(y,z) =&\ Q_2(y,w,z), R_1(x, y)
+		\end{align*}
+
 \end{frame}
 
 \begin{frame}
-	\begin{figure}
-		\frametitle{Introduction}
-		\framesubtitle{CaVieR: Reusing queries by combining view trees}
-		\begin{tikzpicture}[scale=0.6, transform shape, level distance=1.5cm,
-			level 1/.style={sibling distance=1cm},
-			level 2/.style={sibling distance=0.55cm},
-			]
-			
-			\node at (-1, 0){F-IVM};
-			
-			
-			\node at (2,-1.5) {$\delta \text{Q}_1$}[level 1/.style={sibling distance=2cm},level 2/.style={sibling distance=1.25cm}]
-			child {node {$\delta V_{\text{RS}}$}
-				child {node {$\delta\text{R}$}}
-				child {node {$\delta\text{S}$}}
-			}
-			child {node {$\delta V_{\text{TU}}$}
-				child {node {$\delta\text{T}$}}
-				child {node {$\delta\text{U}$}}
-			};
-			
-			\node at (10.5,-1.5) {$\delta \text{Q}_2$}[level 1/.style={sibling distance=2cm},level 2/.style={sibling distance=1.25cm}]
-			child {node {$\delta V_{\text{RS}}$}
-				child {node {$\delta\text{R}$}}
-				child {node {$\delta\text{S}$}}
-			}
-			child {node {$\delta V_{\text{TU}}$}
-				child {node {$\delta\text{T}$}}
-				child {node {$\delta\text{U}$}}
-			}
-			child {node {$\delta \text{W}$}};
-			
-			
-			\draw[->, thick] (2,-5.5) -- ++(3.2,-1.5);
-			\draw[->, thick] (10.5,-5.5) -- ++(-3.7,-1.5);
-			\node at (-1, -6.5){CaVieR};
-			
-			
-			\node at (6,-7.5) {$\delta \text{Q}_2$}[level 1/.style={sibling distance=4cm},level 2/.style={sibling distance=2cm},level 3/.style={sibling distance=1cm}]
-			child [dashed]{node {$\delta\text{Q}_1$}
-				child [solid]{node {$V_{\delta\text{RS}}$}
-					child {node {$\delta\text{R}$}}
-					child {node {$\delta\text{S}$}}
-				}
-				child [solid] {node {$\delta V_{\text{TU}}$}
-					child {node {$\delta\text{T}$}}
-					child {node {$\delta\text{U}$}}
-				}
-			}
-			child {node {$\delta \text{W}$}};
-			
-			
-		\end{tikzpicture}
-	\end{figure}
-\end{frame}
-
-\begin{frame}
-	\frametitle{Motivating Example}
-	\framesubtitle{CaVieR}
+	\frametitle{Foundation}
+	\framesubtitle{Query Rewriting}
+			Following [Geck et al., 2022]\footnote{Geck, G., Keppeler, J., Schwentick, T., and Spinrath, C. (2022). Rewriting with acyclic queries: Mind your head. CoRR, abs/2201.05129.}:
 	\begin{align*}
-		Q_1(y,z) =&\ R_1(x, y), R_2(y,z,w,v), R_3(y,w)\\
-		Q_2(y,w,z) =&\ R_2(y,z,w,v), R_3(y,w)\\\\
-		Q_1'(y,z) =&\ Q_2(y,w,z), R_1(x, y)
+		Q_2(y,z) =&\ \colorbox{cyan}{\mbox{$R_1(x, y)$}}, \colorbox{yellow}{\mbox{$R_2(y,z,w,v), R_3(y,w)$}}\\
+		Q_1(y,w,z) =&\ \colorbox{yellow}{\mbox{$R_2(y,z,w,v), R_3(y,w)$}}\\
+		%			Q_1'(y,z) =&\ Q_2(y,w,z), R_1(x, y)
 	\end{align*}
+	
 \end{frame}
 
-\begin{frame}
-	\frametitle{Motivating Example II}
-	\framesubtitle{CaVieR}
-	\begin{columns}
-		\begin{column}{0.3\textwidth}
-			\begin{align*}
-				Q_1 &= R_1, R_2, R_3, R_4, R_5\\
-				Q_2 &= R_1, R_2, R_3\\
-				Q_3 &= R_2, R_3\\
-				Q_4 &= R_3, R_4, R_5\\
-				Q_5 &= R_3, R_4
-			\end{align*}
-		\end{column}
-		
-		\begin{column}{0.7\textwidth}
-			\begin{figure}
-				\includegraphics[width=0.76\linewidth, trim=0 1.5cm 0 1.5cm, clip]{Figures/Viz_DoubleR3.pdf}
-			\end{figure}
-		\end{column}
-		
-	\end{columns}
-\end{frame}
-
-\section{Theory} 
-%------------------------------------------------
 \begin{frame}
 	\frametitle{Foundations}
 	\framesubtitle{Query Rewriting}
@@ -464,147 +270,197 @@ right color=transparent!100, left color=transparent!0]
 	\end{block}
 \end{frame}
 
-
-\subsection{Foundations}
 \begin{frame}
-		\frametitle{Foundations}
-		\framesubtitle{Principles of FIVM}
-
-
-		$Q_1(y,z) = R_1(x, y), R_2(y,z,w,v), R_3(y,w)$
-		\begin{columns}[c] 
-			\begin{column}{0.45\textwidth} 
-				\begin{figure}
-					\includegraphics[height=0.5\textheight]{Figures/variable_order.pdf}
-					\caption{Variable Order}
-				\end{figure}
-			\end{column}
-			\begin{column}{0.45\textwidth} 
-				\begin{figure}
-					\includegraphics[height=0.5\textheight]{Figures/optimized_viewtree.pdf}
-					\caption{View Tree}
-				\end{figure}
-			\end{column}
-		\end{columns}
-\end{frame}
-
-\begin{frame}
-	\frametitle{Dynamic Query Evaluation Framework}
-	\framesubtitle{[Kara et al., 2023]}
-	\scriptsize
-	\vspace*{-0.5cm}
-	Given a CQAP $Q(\mathcal{O} \mid \mathcal{I})$, compute a data structure that supports answering the access requests and maintains it under updates. 
-
-	\begin{figure}
-		\hspace*{-2cm}
-		\centering
-		\begin{tikzpicture}
-			\node at (-1.0,-0.25) {query};
-			\node at (1.0,-0.05) {data};
-			\node at (1.0,-0.4) {base};
-			\node at (5.5,-0.3){
-				\begin{tikzpicture}
-					\tikzstyle{background}=[rectangle, rounded corners=2mm]
-					\fill[rounded corners=2mm, fill=blue!20,inner sep= 2.5mm] (0,0) rectangle (2,1.5) node[pos=.5, text width=2cm, align=center] {data structure};
-				\end{tikzpicture}
-			};
-			
-			\node at (1.8, -0.3) (anchor1''){};
-			\node at (4.2, -0.3) (anchor2''){};
-			\node at (3, 0.1) {preprocess};
-			
-			\draw[->,color = blue,minimum height=4cm,minimum width=7cm, line width = 0.07cm](anchor1'')-- (anchor2'');
-			
-			\node at (3, -0.7) {\em \color{OliveGreen} preprocessing};
-			\node at (3, -1.1) {\em \color{OliveGreen} time};
-			
-			%%%%%%%%%%%%%%%
-			% Enumeration
-			%%%%%%%%%%%%%%% 
-				\node at (7.8, -1.0) {enumerate};
-				\draw[dashed,->,color = blue,minimum height=4cm,minimum width=7cm, line width = 0.07cm](6.8,-0.6)-- (8.8,-0.6);
-				\node at (10.5,-1.9cm){
-					\begin{tikzpicture}
-						\tikzstyle{background}=[rectangle, rounded corners=2mm]
-						\fill[rounded corners=2mm, fill=blue!20,inner sep= 2.5mm] (0,0) rectangle (1.75,2.2) node[pos=.5, text width=3cm, align=center] {};
-							\node at (0.85, 1.9) {tuple 1};
-						
-							\node at (0.85, 1.45) {tuple 2};
-
-							\node at (0.85, 1.05) {$\dots$};
-
-							\node at (0.85, 0.7) {tuple n};
-
-							\node[text width=2cm, align=center] at (2.75, 0.7) {\em \color{OliveGreen} enumeration delay};
-
-							\node at (0.85, 0.3) {EOF};
-
-						
-						\node at (0.85, -0.5) {$\mathcal{O}$-tuples};
-						% \node at (0.85, -0.8) {EOF};
-					\end{tikzpicture}
-				};
-				
-				% 
-				\node[text width=2cm, align=center] at (7.8, 0.8) {access request};
-				\draw[<-,color = blue,minimum height=4cm,minimum width=7cm, line width = 0.07cm](6.8,0.3)-- (8.8,0.3);
-				\node at (9.8,0.3cm){
-					$\mathcal{I}$-tuple
-				};
-
-			%%%%%%%%%%%%%%%
-			% Single-tuple update
-			%%%%%%%%%%%%%%
-				\node at (0.97, -3.3) (anchor1''''){};
-				\node at (0.97, -0.7) (anchor2''''){};
-				\node at (0.97, -3.7) {update};
-				% \node at (0.57, -3.9) {tuples};
-				
-				\draw[->,color = blue,minimum height=4cm,minimum width=7cm, line width = 0.07cm](anchor1'''')-- (anchor2'''');
-				\node at (1.9, -3.7) (anchor3){};
-				\node at (5.5, -3.7) (anchor4){};
-				\node at (5.4, -3.85) (anchor42){};
-				\node at (5.4, -1.1) (anchor5){};
-				
-				\draw[color = blue,minimum height=4cm,minimum width=7cm, line width = 0.07cm](anchor3)-- (anchor4);
-				
-				\draw[->,color = blue,minimum height=4cm,minimum width=7cm, line width = 0.07cm](anchor42)-- (anchor5);
-				
-				\node at (3.5, -3.4) {maintain};
-				
-				
-				\node[rotate=90] at (0.65, -2.0) {\footnotesize maintain};
-				
-				
-				\node at (3.5, -4.0) {\em \color{OliveGreen} update time};
-				
-				\node[rotate=90] at (1.3, -2.0) {\footnotesize \em \color{OliveGreen} update time};
-		\end{tikzpicture}
-		
-		
-	\end{figure}
+	\frametitle{Foundation}
+	\framesubtitle{Query Rewriting}
+	
+	\begin{align*}
+		Q_2(y,z) =&\ R_1(x, y), R_2(y,z,w,v), R_3(y,w)\\
+		Q_1(y,w,z) =&\ R_2(y,z,w,v), R_3(y,w)\\\\
+		Q_2'(y,z) =&\ R_1(x, y), Q_1(y,w,z)
+	\end{align*}
 	
 \end{frame}
 
-\begin{frame}
-	\frametitle{Foundations}
-	\framesubtitle{Query Classes}
-	Complexity of Conjunctive Queries:
-	\begin{align*}
-		Preprocessing Time & & O(N^w) \\
-		Enumeration Delay & & O(1) \\
-		Update Time & & O(N^\delta)
-	\end{align*}
-	$w$: Fractional Hypertree Width\\
-	$\delta$: largest $w$ over all delta queries
-	\begin{block}{Q-Hierarchical}
-		$w = 1, \delta=0$ 
-	\end{block}
-\end{frame}
+%\begin{frame}
+%	\frametitle{Motivating Example II}
+%	\framesubtitle{CaVieR}
+%	\begin{columns}
+%		\begin{column}{0.3\textwidth}
+%			\begin{align*}
+%				Q_1 &= R_1, R_2, R_3, R_4, R_5\\
+%				Q_2 &= R_1, R_2, R_3\\
+%				Q_3 &= R_2, R_3\\
+%				Q_4 &= R_3, R_4, R_5\\
+%				Q_5 &= R_3, R_4
+%			\end{align*}
+%		\end{column}
+%		
+%		\begin{column}{0.7\textwidth}
+%			\begin{figure}
+%				\includegraphics[width=0.76\linewidth, trim=0 1.5cm 0 1.5cm, clip]{Figures/Viz_DoubleR3.pdf}
+%			\end{figure}
+%		\end{column}
+%		
+%	\end{columns}
+%\end{frame}
+
+
+%------------------------------------------------
+
+
+%
+%\subsection{Foundations}
+%\begin{frame}
+%		\frametitle{Foundations}
+%		\framesubtitle{Principles of FIVM}
+%
+%
+%		$Q_1(y,z) = R_1(x, y), R_2(y,z,w,v), R_3(y,w)$
+%		\begin{columns}[c] 
+%			\begin{column}{0.45\textwidth} 
+%				\begin{figure}
+%					\includegraphics[height=0.5\textheight]{Figures/variable_order.pdf}
+%					\caption{Variable Order}
+%				\end{figure}
+%			\end{column}
+%			\begin{column}{0.45\textwidth} 
+%				\begin{figure}
+%					\includegraphics[height=0.5\textheight]{Figures/optimized_viewtree.pdf}
+%					\caption{View Tree}
+%				\end{figure}
+%			\end{column}
+%		\end{columns}
+%\end{frame}
+%
+%\begin{frame}
+%	\frametitle{Dynamic Query Evaluation Framework}
+%	\framesubtitle{[Kara et al., 2023]}
+%	\scriptsize
+%	\vspace*{-0.5cm}
+%	Given a CQAP $Q(\mathcal{O} \mid \mathcal{I})$, compute a data structure that supports answering the access requests and maintains it under updates. 
+%
+%	\begin{figure}
+%		\hspace*{-2cm}
+%		\centering
+%		\begin{tikzpicture}
+%			\node at (-1.0,-0.25) {query};
+%			\node at (1.0,-0.05) {data};
+%			\node at (1.0,-0.4) {base};
+%			\node at (5.5,-0.3){
+%				\begin{tikzpicture}
+%					\tikzstyle{background}=[rectangle, rounded corners=2mm]
+%					\fill[rounded corners=2mm, fill=blue!20,inner sep= 2.5mm] (0,0) rectangle (2,1.5) node[pos=.5, text width=2cm, align=center] {data structure};
+%				\end{tikzpicture}
+%			};
+%			
+%			\node at (1.8, -0.3) (anchor1''){};
+%			\node at (4.2, -0.3) (anchor2''){};
+%			\node at (3, 0.1) {preprocess};
+%			
+%			\draw[->,color = blue,minimum height=4cm,minimum width=7cm, line width = 0.07cm](anchor1'')-- (anchor2'');
+%			
+%			\node at (3, -0.7) {\em \color{OliveGreen} preprocessing};
+%			\node at (3, -1.1) {\em \color{OliveGreen} time};
+%			
+%			%%%%%%%%%%%%%%%
+%			% Enumeration
+%			%%%%%%%%%%%%%%% 
+%				\node at (7.8, -1.0) {enumerate};
+%				\draw[dashed,->,color = blue,minimum height=4cm,minimum width=7cm, line width = 0.07cm](6.8,-0.6)-- (8.8,-0.6);
+%				\node at (10.5,-1.9cm){
+%					\begin{tikzpicture}
+%						\tikzstyle{background}=[rectangle, rounded corners=2mm]
+%						\fill[rounded corners=2mm, fill=blue!20,inner sep= 2.5mm] (0,0) rectangle (1.75,2.2) node[pos=.5, text width=3cm, align=center] {};
+%							\node at (0.85, 1.9) {tuple 1};
+%						
+%							\node at (0.85, 1.45) {tuple 2};
+%
+%							\node at (0.85, 1.05) {$\dots$};
+%
+%							\node at (0.85, 0.7) {tuple n};
+%
+%							\node[text width=2cm, align=center] at (2.75, 0.7) {\em \color{OliveGreen} enumeration delay};
+%
+%							\node at (0.85, 0.3) {EOF};
+%
+%						
+%						\node at (0.85, -0.5) {$\mathcal{O}$-tuples};
+%						% \node at (0.85, -0.8) {EOF};
+%					\end{tikzpicture}
+%				};
+%				
+%				% 
+%				\node[text width=2cm, align=center] at (7.8, 0.8) {access request};
+%				\draw[<-,color = blue,minimum height=4cm,minimum width=7cm, line width = 0.07cm](6.8,0.3)-- (8.8,0.3);
+%				\node at (9.8,0.3cm){
+%					$\mathcal{I}$-tuple
+%				};
+%
+%			%%%%%%%%%%%%%%%
+%			% Single-tuple update
+%			%%%%%%%%%%%%%%
+%				\node at (0.97, -3.3) (anchor1''''){};
+%				\node at (0.97, -0.7) (anchor2''''){};
+%				\node at (0.97, -3.7) {update};
+%				% \node at (0.57, -3.9) {tuples};
+%				
+%				\draw[->,color = blue,minimum height=4cm,minimum width=7cm, line width = 0.07cm](anchor1'''')-- (anchor2'''');
+%				\node at (1.9, -3.7) (anchor3){};
+%				\node at (5.5, -3.7) (anchor4){};
+%				\node at (5.4, -3.85) (anchor42){};
+%				\node at (5.4, -1.1) (anchor5){};
+%				
+%				\draw[color = blue,minimum height=4cm,minimum width=7cm, line width = 0.07cm](anchor3)-- (anchor4);
+%				
+%				\draw[->,color = blue,minimum height=4cm,minimum width=7cm, line width = 0.07cm](anchor42)-- (anchor5);
+%				
+%				\node at (3.5, -3.4) {maintain};
+%				
+%				
+%				\node[rotate=90] at (0.65, -2.0) {\footnotesize maintain};
+%				
+%				
+%				\node at (3.5, -4.0) {\em \color{OliveGreen} update time};
+%				
+%				\node[rotate=90] at (1.3, -2.0) {\footnotesize \em \color{OliveGreen} update time};
+%		\end{tikzpicture}
+%		
+%		
+%	\end{figure}
+%	
+%\end{frame}
+%
+%\begin{frame}
+%	\frametitle{Foundations}
+%	\framesubtitle{Query Classes}
+%	Complexity of Conjunctive Queries:
+%	\begin{align*}
+%		Preprocessing Time & & O(N^w) \\
+%		Enumeration Delay & & O(1) \\
+%		Update Time & & O(N^\delta)
+%	\end{align*}
+%	$w$: Fractional Hypertree Width\\
+%	$\delta$: largest $w$ over all delta queries
+%	\begin{block}{Q-Hierarchical}
+%		$w = 1, \delta=0$ 
+%	\end{block}
+%\end{frame}
 
 
 
 \section{CaVieR}
+\subsection{Aim}
+\begin{frame}
+	\frametitle{CaVieR}
+	\framesubtitle{Aim of the Thesis}
+	\begin{enumerate}
+		\item Implement CaVieR
+		\item Proof correctness \& completeness
+		\item Test CaVieR on synthetic and real-world datasets
+	\end{enumerate}
+\end{frame}
+
 \subsection{Algorithm}
 \begin{frame}
 	\frametitle{CaVieR }
@@ -622,24 +478,53 @@ right color=transparent!100, left color=transparent!0]
 	\end{block}
 \end{frame}
 
-\begin{frame}
-	\frametitle{CaVieR}
-	\framesubtitle{Q-Hierarchical Rewriting}
-	\begin{block}{Cascading Q-Hierarchical}
-	    A set of queries $\mathbf{Q}$ is called Cascading Q-Hierarchical if for $Q \in \mathbf{Q}$ there exists a q-hierarchical $\mathcal{Q}$-rewriting for $\mathcal{Q} = \bigcup_{view \in \mathbf{Q}}body(view) \cup \mathbf{Q}\setminus Q$.
-	\end{block}
-\end{frame}
 
 \begin{frame}
 	\frametitle{CaVieR}
 	\framesubtitle{Single Query Rewriting}
-	\begin{figure}
-		\begin{align*}
-			Q_1(y,z) =&\ R_1(x, y), R_2(y,z,w,v), R_3(y,w)\\
-			Q_2(y,w,z) =&\ R_2(y,z,w,v), R_3(y,w)\\\\
-			Q_1'(y,z) =&\ Q_2(y,w,z), R_1(x, y)
-		\end{align*}
-	\end{figure}
+	\begin{algorithm}[H]
+		\caption{Single Rewriting}\label{alg:SingleRewriting}
+		\begin{algorithmic}[1]
+			\Function{SingleRewriting}{views: Set[Query], q: Query}
+			\For{$(A_1,...,A_m) \in Partitions(body(q))$}
+			\For{$A_i \in A_1,...,A_m$}
+			\State $morph_i \gets$ FindHomomorphism($A_i$, views)\footnotemark
+			\If{$morph_i$ == Null}
+			\State \textbf{break}
+			\EndIf
+			\EndFor
+			\If{isQHierarchical(\{$morph_1,\dots,morph_m$\})}
+			\State \textbf{report} \{$morph_1,\dots,morph_m$\}
+			\EndIf
+			\EndFor
+			\EndFunction
+		\end{algorithmic}
+	\end{algorithm}
+	\footnotetext{Cover Partition by Geck, G., Keppeler, J., Schwentick, T., and Spinrath, C. (2022). Rewriting with acyclic queries: Mind your head. CoRR, abs/2201.05129.}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{CaVieR}
+	\framesubtitle{Query Set Rewriting}
+	\begin{algorithm}[H]
+		\caption{All Rewritings}\label{alg:AllRewriting}
+		\begin{algorithmic}[1]
+			\Function{AllRewritings}{queries: Set[Query]}
+			\For{$query_i \in queries$}
+			\If{not isQHierarchical(query)}
+			\State{$rewritings_i \gets SingleRewriting(queries \setminus query_i, query_i)$}
+			\If{$rewritings_i.empty()$}
+			\State{\textbf{return} set()}
+			\EndIf
+			\Else
+			\State{$rewritings_i \gets \{query_i\}$}
+			\EndIf
+			\EndFor
+			\State{\textbf{return} $rewriting_1 \times \dots \times rewriting_n$}
+			\EndFunction
+		\end{algorithmic}
+	\end{algorithm}
 \end{frame}
 
 \begin{frame}
@@ -653,10 +538,11 @@ right color=transparent!100, left color=transparent!0]
 			Q_4(x,y,z) &= R_1(x,y), R_2(y,z)&\\\\
 			Q_1'(x,y,z,w,v)& = Q_2(x,y,z,w), R_4(w,v)&\\
 			Q_2'(x,y,z,w)& = Q_3(y,z,w), R_1(x,y)&\\
-			Q_2''(x,y,z,w)& = Q_4(x,y,z), R_3(z,w)&
+			Q_2''(x,y,z,w)& = Q_4(x,y,z), R_3(z,w)&\\
+			Q_2'''(x,y,z,w)& = Q_3(y,z,w), Q_4(x,y,z), R_3(z,w)& \textit{Set semantics}\\
 		\end{align*}
 		
-		$\{Q_1', Q_2', Q_3, Q_4\}$ and $\{Q_1', Q_2'', Q_3, Q_4\}$.
+		$\{Q_1', Q_2', Q_3, Q_4\}$, $\{Q_1', Q_2'', Q_3, Q_4\}$ and $\{Q_1', Q_2''', Q_3, Q_4\}$.
 	\end{figure}
 \end{frame}
 
@@ -702,8 +588,9 @@ right color=transparent!100, left color=transparent!0]
 				{Dependency Graph};
 			\end{tikzpicture}
 		\end{minipage}
-		\begin{minipage}{0.45\textwidth}
-				\includegraphics[width=\linewidth]{Figures/CombinedViewTree.pdf}
+		\begin{minipage}{0.49\textwidth}
+			\vspace{-0.8cm}
+			\includegraphics[width=1.1\linewidth]{Figures/CombinedViewTree.pdf}
 		\end{minipage}
 		\end{figure}
 \end{frame}
@@ -762,7 +649,6 @@ right color=transparent!100, left color=transparent!0]
 	28 Queries total
 \end{frame}
 
-\subsection{Experiments}
 \begin{frame}
 	\frametitle{Experiments}
 	\framesubtitle{Dimensions}
@@ -1043,7 +929,6 @@ right color=transparent!100, left color=transparent!0]
 	
 \end{frame}
 
-\subsection{}
 \begin{frame}
 	\frametitle{Experiment 4: Input Cardinalities}
 	\framesubtitle{TPC-H}
@@ -1080,7 +965,6 @@ right color=transparent!100, left color=transparent!0]
 	\end{figure}
 \end{frame}
 
-\subsection{}
 \begin{frame}
 	\frametitle{Experiment 5: Number of Free Variables}
 	\framesubtitle{Retailer}
@@ -1115,7 +999,6 @@ right color=transparent!100, left color=transparent!0]
 	
 \end{frame}
 
-\subsection{}
 \begin{frame}
 	\frametitle{Experiment 6: Influence of skewed Data}
 	\framesubtitle{TPC-H \& JCC-H}
