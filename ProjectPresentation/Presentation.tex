@@ -87,8 +87,8 @@
 
 % Beamer comes with several font themes to easily change the fonts used in various parts of the presentation. Review the comments beside each one to decide if you would like to use it. Note that additional options can be specified for several of these font themes, consult the beamer documentation for more information.
 
-%\usefonttheme{default} % Typeset using the default sans serif font
-\usefonttheme{serif} % Typeset using the default serif font (make sure a sans font isn't being set as the default font if you use this option!)
+\usefonttheme{default} % Typeset using the default sans serif font
+%\usefonttheme{serif} % Typeset using the default serif font (make sure a sans font isn't being set as the default font if you use this option!)
 %\usefonttheme{structurebold} % Typeset important structure text (titles, headlines, footlines, sidebar, etc) in bold
 %\usefonttheme{structureitalicserif} % Typeset important structure text (titles, headlines, footlines, sidebar, etc) in italic serif
 %\usefonttheme{structuresmallcapsserif} % Typeset important structure text (titles, headlines, footlines, sidebar, etc) in small caps serif
@@ -103,8 +103,8 @@
 right color=transparent!100, left color=transparent!0]
 \definecolor{transparent}{RGB}{255,255,255}
 
-%\usepackage{helvet} % Use the Helvetica font for sans serif text
-\usepackage[default]{opensans} % Use the Open Sans font for sans serif text
+\usepackage{helvet} % Use the Helvetica font for sans serif text
+%\usepackage[default]{opensans} % Use the Open Sans font for sans serif text
 %\usepackage[default]{FiraSans} % Use the Fira Sans font for sans serif text
 %\usepackage[default]{lato} % Use the Lato font for sans serif text
 
@@ -188,173 +188,50 @@ right color=transparent!100, left color=transparent!0]
 \begin{frame}
 	\frametitle{Introduction}
 	\framesubtitle{Real time monitoring}
-	\begin{figure}
-		\vspace{-0.3cm}
-		\begin{tikzpicture}
-			\node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[height=\textheight]{Figures/manager.png}};
-			\begin{scope}[x={(image.south east)},y={(image.north west)}]
-				\fill[white,path fading=fade left] (0,0) rectangle (0.5,1); % Gradient transparency
-				\node[anchor=west,align=left] at (0.02,0.5) { % Centered vertically
-					\begin{minipage}{0.4\textwidth} % Adjust the width
-						\begin{enumerate}
-							\item Different aspects of the data
-							\item Real time
-							\item Big Data
-						\end{enumerate}
-					\end{minipage}
-				};
-			\end{scope}
-		\end{tikzpicture}
-	\end{figure}
-\end{frame}
-
-\newsavebox{\ClassicalIVM}
-\begin{lrbox}{\ClassicalIVM}
-	\begin{tikzpicture}[scale=0.54, transform shape, level distance=1.5cm,
-		level 1/.style={sibling distance=0.75cm},
-		level 2/.style={sibling distance=0.55cm},
-		]
-		\node at (2,0.6) {$\textbf{Q}_1$};
-		
-		\node at (0,0) {$\delta \text{Q}^R_1$}[level 1/.style={sibling distance=0.75cm}]
-		child {node {$\delta$R}}
-		child {node {S}}
-		child {node {T}}
-		child {node {U}};
-		
-		\node at (2,-1) {$\dots$};
-		
-		\node at (4,0) {$\delta \text{Q}^U_1$}[level 1/.style={sibling distance=0.75cm}]
-		child {node {R}}
-		child {node {S}}
-		child {node {T}}
-		child {node {$\delta$U}};
+	\begin{tikzpicture}[remember picture,overlay]
+		\node[anchor=south west, yshift=0cm] at (current page.south west) {\includegraphics[width=\paperwidth,trim={0 0 0 1.5cm},clip]{Figures/IntroStart.pdf}};
 	\end{tikzpicture}
-\end{lrbox}
+\end{frame}
 
 \begin{frame}
 	\frametitle{Introduction}
 	\framesubtitle{Real time monitoring}
-	\begin{figure}
-		\vspace{-0.3cm}
-		\begin{tikzpicture}
-			\node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[height=\textheight]{Figures/manager.png}};
-			\begin{scope}[x={(image.south east)},y={(image.north west)}]
-				\fill[white,path fading=fade left] (0,0) rectangle (0.8,1); % Gradient transparency
-				\node[anchor=west,align=left] at (0.02,0.7) { % Centered vertically
-					\begin{minipage}{0.4\textwidth} % Adjust the width
-						First approach: \\ \textbf{Classical IVM}
-						\begin{itemize}
-							\item Origin of IVM
-							\item Not performant on large queries
-							\item Multiple delta view trees 
-						\end{itemize}
-						\usebox{\ClassicalIVM}
-					\end{minipage}
-				};
-			\end{scope}
-		\end{tikzpicture}
-	\end{figure}
-\end{frame}
-
-
-\newsavebox{\DBToaster}
-\begin{lrbox}{\DBToaster}
-	\begin{tikzpicture}[scale=0.54, transform shape, level distance=1.5cm,
-		level 1/.style={sibling distance=0.75cm},
-		level 2/.style={sibling distance=0.55cm},
-		]
-		\node at (0,-3.5) {$\delta \text{Q}^R_1$}[level 1/.style={sibling distance=1.5cm}]
-		child {node {$\delta V_{\text{RS}}$}
-			child {node {$\delta\text{R}$}}
-			child {node {S}}
-		}
-		child {node {$V_{\text{TU}}$}
-			child {node {T}}
-			child {node {U}}
-		};
-		
-		\node at (2,-5) {$\dots$};
-		
-		
-		\node at (4,-3.5) {$\delta \text{Q}^U_1$}[level 1/.style={sibling distance=1.5cm}]
-		child {node {$V_{\text{RS}}$}
-			child {node {R}}
-			child {node {S}}
-		}
-		child {node {$\delta V_{\text{TU}}$}
-			child {node {T}}
-			child {node {$\delta\text{U}$}}
-		};
+	\begin{tikzpicture}[remember picture,overlay]
+		\node[anchor=south west, yshift=0cm] at (current page.south west) {\includegraphics[width=\paperwidth,trim={0 0 0 1.5cm},clip]{Figures/IntroNaive.pdf}};
 	\end{tikzpicture}
-\end{lrbox}
+\end{frame}
+\begin{frame}
+	\frametitle{Introduction}
+	\framesubtitle{Real time monitoring}
+	\begin{tikzpicture}[remember picture,overlay]
+		\node[anchor=south west, yshift=0cm] at (current page.south west) {\includegraphics[width=\paperwidth,trim={0 0 0 1.5cm},clip]{Figures/IntroClassical.pdf}};
+	\end{tikzpicture}
+\end{frame}
 
 \begin{frame}
 	\frametitle{Introduction}
 	\framesubtitle{Real time monitoring}
-	\begin{figure}
-		\vspace{-0.3cm}
-		\begin{tikzpicture}
-			\node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[height=\textheight]{Figures/manager.png}};
-			\begin{scope}[x={(image.south east)},y={(image.north west)}]
-				\fill[white,path fading=fade left] (0,0) rectangle (0.8,1); % Gradient transparency
-				\node[anchor=west,align=left] at (0.02,0.7) { % Centered vertically
-					\begin{minipage}{0.6\textwidth} % Adjust the width
-						Second approach: \\ \textbf{DBToaster}
-						\begin{itemize}
-							\item Improvement: \\Reused partial joins
-							\item Remaining challenges:\\ Multiple delta view trees 
-						\end{itemize}
-						\usebox{\DBToaster}
-					\end{minipage}
-				};
-			\end{scope}
-		\end{tikzpicture}
-	\end{figure}
-\end{frame}
-
-
-\newsavebox{\FIVM}
-\begin{lrbox}{\FIVM}
-	\begin{tikzpicture}[scale=0.54, transform shape, level distance=1.5cm,
-		level 1/.style={sibling distance=0.75cm},
-		level 2/.style={sibling distance=0.55cm},
-		]
-		\node at (2,-9.5) {$\delta \text{Q}_1$}[level 1/.style={sibling distance=2cm},level 2/.style={sibling distance=1.25cm}]
-		child {node {$\delta V_{\text{RS}}$}
-			child {node {$\delta\text{R}$}}
-			child {node {$\delta\text{S}$}}
-		}
-		child {node {$\delta V_{\text{TU}}$}
-			child {node {$\delta\text{T}$}}
-			child {node {$\delta\text{U}$}}
-		};
+	\begin{tikzpicture}[remember picture,overlay]
+		\node[anchor=south west, yshift=0cm] at (current page.south west) {\includegraphics[width=\paperwidth,trim={0 0 0 1.5cm},clip]{Figures/IntroDBToaster.pdf}};
 	\end{tikzpicture}
-\end{lrbox}
+\end{frame}
 
 \begin{frame}
 	\frametitle{Introduction}
 	\framesubtitle{Real time monitoring}
-	\begin{figure}
-		\vspace{-0.3cm}
-		\begin{tikzpicture}
-			\node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[height=\textheight]{Figures/manager.png}};
-			\begin{scope}[x={(image.south east)},y={(image.north west)}]
-				\fill[white,path fading=fade left] (0,0) rectangle (0.8,1); % Gradient transparency
-				\node[anchor=west,align=left] at (0.02,0.7) { % Centered vertically
-					\begin{minipage}{0.6\textwidth} % Adjust the width
-						Third approach: \\ \textbf{F-IVM}
-						\begin{itemize}
-							\item Improvement: \\Single delta view tree
-							\item Remaining challenges:\\ Query set support
-						\end{itemize}
-						\usebox{\FIVM}
-					\end{minipage}
-				};
-			\end{scope}
-		\end{tikzpicture}
-	\end{figure}
+	\begin{tikzpicture}[remember picture,overlay]
+		\node[anchor=south west, yshift=0cm] at (current page.south west) {\includegraphics[width=\paperwidth,trim={0 0 0 1.5cm},clip]{Figures/IntroFIVM.pdf}};
+	\end{tikzpicture}
 \end{frame}
+
+\begin{frame}
+	\frametitle{Introduction}
+	\framesubtitle{Real time monitoring}
+	\begin{tikzpicture}[remember picture,overlay]
+		\node[anchor=south west, yshift=0cm] at (current page.south west) {\includegraphics[width=\paperwidth,trim={0 0 0 1.5cm},clip]{Figures/IntroCavier.pdf}};
+	\end{tikzpicture}
+\end{frame}
+
 
 \begin{frame}
 		\vspace{-0.2cm}
@@ -860,8 +737,56 @@ right color=transparent!100, left color=transparent!0]
 
 \end{frame}
 
+\subsection{Experiments}
+\begin{frame}
+	\frametitle{Experiments}
+	\framesubtitle{Datasets \& Queries}
+	\textbf{Datasets}
+	\begin{itemize}
+		\item TPC-H	  (T...)
+		\item JCC-H   (J...)
+		\item Retailer  (R...)
+	\end{itemize}
+	\vspace{1em}
+	\textbf{Queries}\\
+	\vspace{0.5em}
+	\begin{tabular}{c|c|c}
+		$TNQ_4$ & TPC-H & Non Q-Hierarchical \\
+		  \addlinespace[0.5em]
+		\hline
+		  \addlinespace[0.5em]
+		$JQ_2$ & JCC-H & Q-Hierarchical \\
+	\end{tabular}
+	
+	\vspace{1em}
+	28 Queries total
+\end{frame}
 
 \subsection{Experiments}
+\begin{frame}
+	\frametitle{Experiments}
+	\framesubtitle{Dimensions}
+	\begin{itemize}
+		\item Data parameters
+		\begin{itemize}
+			\item Datastream ordering
+			\item Cardinalities of the input relations
+			\item Value Distribution
+		\end{itemize}
+		\item Implementation parameters
+		\begin{itemize}
+			\item Batch size
+			\item Payload data structure
+		\end{itemize}
+		\item Query parameters
+		\begin{itemize}
+			\item Number of queries
+			\item Number of free variables
+		\end{itemize}
+	\end{itemize}
+\end{frame}
+
+
 \begin{frame}
 	\frametitle{Experiment 1: Overall Runtime}
 	\framesubtitle{Retailer}
@@ -952,265 +877,9 @@ right color=transparent!100, left color=transparent!0]
 \end{frame}
 
 
-\begin{frame}
-	\frametitle{Experiment 2: Ordering the Data Stream}
-	\framesubtitle{TPC-H}
-	\begin{figure}
-
-
-		\begin{minipage}{0.25\textwidth}
-		\scalebox{0.6}{
-			\begin{tikzpicture}[
-				level distance=2.0cm,
-				level 2/.style={sibling distance=1.7cm}]
-				\node {$TNQ_4$}
-				child {node {\footnotesize \texttt{PartSupp}}}
-				child {node {$TQ_5$}
-					child {node {\footnotesize \texttt{Orders}}}
-					child {node {\footnotesize \texttt{LineItem}}}
-				}
-				child {node {\footnotesize \texttt{Part}}};
-				\node at (current bounding box.south)[below=20pt, text width=4cm, text centered]
-				{Dependency Graph};
-			\end{tikzpicture}
-		}
-		\end{minipage}
-		\begin{minipage}{0.74\textwidth}
-			\begin{figure}
-				\centering
-				\includegraphics[width=\linewidth]{Figures/OrderedVSUnordered.png}
-			\end{figure}
-		\end{minipage}
-		\caption{Comparison of the overall update times between ordered and unordered input relations, illustrated using query set $\mathcal{S}_5 = \{TNQ_4,\ TQ_5\}$}
-		\label{fig:orderedVSunordered}
-	\end{figure}
-\end{frame}
 
 \begin{frame}
-	\frametitle{Experiment 2: Ordering the Data Stream}
-	\framesubtitle{TPC-H}
-	\begin{figure}
-		\includegraphics[trim={1cm 1.5cm 1cm 1.5cm},clip,width=\linewidth]{Figures/Viz_TPCH_1.pdf}
-	\end{figure}
-\end{frame}
-
-\begin{frame}
-	\frametitle{Hypothesis}
-	\framesubtitle{Working Hypothesis}
-	\begin{block}{Hypothesis 3}
-			CaVieR outperforms F-IVM on Cascading Q-Hierarchical sets of queries with at least one non-q-hierarchical query and \textbf{unordered} input relations by having a lower update time.
-	\end{block}
-		\begin{block}{Hypothesis 2}
-		CaVieR outperforms F-IVM on Cascading Q-Hierarchical sets of queries with at least one non-q-hierarchical query by having a lower enumeration delay.
-	\end{block}
-	
-\end{frame}
-
-\subsection{}
-\begin{frame}
-	\frametitle{Experiment 3: Input Cardinalities}
-	\framesubtitle{TPC-H}
-	\begin{figure}
-
-		\begin{minipage}{0.25\textwidth}
-			\scalebox{0.6}{
-				\begin{tikzpicture}[
-					level distance=2.0cm,
-					level 2/.style={sibling distance=1.7cm}
-					]
-					\node (TNQ1) {$TNQ_1$}
-					child {node {\footnotesize \texttt{Part}}}
-					child {node (TQ) {TQ}
-						child {node {\footnotesize \texttt{Supplier}}}
-						child {node {\footnotesize \texttt{PartSupp}}}
-						child[dashed] {node (LineItem) {\footnotesize \texttt{LineItem}}}
-					};
-					\draw[dashed] (TNQ1) -- (LineItem) node[midway, above] {3};
-					\draw[dashed] (TQ) -- (LineItem) node[midway, left] {2};
-					\node at (current bounding box.south)[below=20pt, text width=4cm, text centered]
-					{Dependency Graph};
-				\end{tikzpicture}
-			}
-		\end{minipage}
-		\begin{minipage}{0.74\textwidth}
-			\begin{figure}
-				\centering
-				\includegraphics[width=\linewidth]{Figures/InputCardinalitiesTPCH.png}
-			\end{figure}
-		\end{minipage}
-	\caption{Illustrating the importance of the cardinalities of the individual relations on the update time of both queries in the query sets $\mathcal{S}_3 = \{TNQ_1, TQ_2\}$ \& $\mathcal{S}_4 = \{TNQ_1, TQ_3\}$ on the TPC-H dataset}
-\label{fig:inputCardinalitiesTpch}
-	\end{figure}
-\end{frame}
-
-\subsection{}
-\begin{frame}
-	\frametitle{Experiment 4: Number of Free Variables}
-	\framesubtitle{Retailer}
-	\begin{figure}
-		\begin{minipage}{0.25\textwidth}
-			\scalebox{0.6}{
-				\begin{tikzpicture}[
-					level distance=2.0cm,
-					level 2/.style={sibling distance=1.7cm}
-					]
-					\node (RNQ1) {$RNQ_1$}
-					child {node {\footnotesize \texttt{Item}}}
-					child {node (RQ2) {$RQ_2$}
-						child {node {\footnotesize \texttt{Inventory}}}
-						child {node {\footnotesize \texttt{Location}}}
-						child {node {\footnotesize \texttt{Weather}}}
-					};
-					\node at (current bounding box.south)[below=20pt, text width=4cm, text centered]
-					{Dependency Graph};
-				\end{tikzpicture}
-			}
-		\end{minipage}
-		\begin{minipage}{0.74\textwidth}
-			\begin{figure}
-				\centering
-				\includegraphics[width=\linewidth]{Figures/NrFreeVariables.png}
-			\end{figure}
-		\end{minipage}
-	\caption{Influence of the number of free non-join variables on the update time of F-IVM and CaVieR.}
-	\label{fig:NrFreeVars}
-	\end{figure}
-	
-\end{frame}
-
-\subsection{}
-\begin{frame}
-	\frametitle{Experiment 5: Influence of skewed Data}
-	\framesubtitle{TPC-H \& JCC-H}
-		\begin{figure}
-		\begin{minipage}{0.25\textwidth}
-			\scalebox{0.6}{
-				\begin{tikzpicture}[
-					level distance=2.0cm,
-					level 2/.style={sibling distance=1.7cm}
-					]
-					\node {$TNQ_4$}
-					child {node {\footnotesize \texttt{Part}}}
-					child {node {$TQ_5$}
-						child {node {\footnotesize \texttt{LineItem}}}
-						child {node {\footnotesize \texttt{Orders}}}
-					}
-					child {node {\footnotesize \texttt{PartSupp}}};
-					\node at (current bounding box.south)[below=20pt, text width=4cm, text centered]
-					{Dependency Graph};
-				\end{tikzpicture}
-			}
-		\end{minipage}
-		\begin{minipage}{0.74\textwidth}
-			\begin{figure}
-				\centering
-				\includegraphics[width=\linewidth]{Figures/TPCH_VS_JCCH.png}
-			\end{figure}
-		\end{minipage}
-		\caption{Comparing TPC-H against JCC-H using CaVieR and F-IVM.}
-	\end{figure}
-\end{frame}
-
-\begin{frame}
-	\frametitle{Experiment 6: Batch Update Sizes}
-	\framesubtitle{TPC-H}
-	\begin{figure}
-		\begin{minipage}{0.25\textwidth}
-			\scalebox{0.6}{
-				\begin{tikzpicture}[
-					level distance=2.0cm,
-					level 2/.style={sibling distance=1.7cm}
-					]
-					\node {$TNQ_1$}
-					child {node {\footnotesize \texttt{Part}}}
-					child {node {$TQ_2$}
-						child {node {\footnotesize \texttt{LineItem}}}
-						child {node {\footnotesize \texttt{Supplier}}}
-						child {node {\footnotesize \texttt{PartSupp}}}
-					};
-					\node at (current bounding box.south)[below=20pt, text width=4cm, text centered]
-					{Dependency Graph};
-				\end{tikzpicture}
-			}
-		\end{minipage}
-		\begin{minipage}{0.74\textwidth}
-			\begin{figure}
-				\centering
-				\includegraphics[width=\linewidth]{Figures/BatchSizes.png}
-			\end{figure}
-		\end{minipage}
-		\caption{Influence of batch sizes on update time. The batch size is given as the base 10 logarithm above each query.}
-	\end{figure}
-\end{frame}
-
-\begin{frame}
-	\frametitle{Experiment 7: Enumeration Delay}
-	\framesubtitle{TPC-H}
-		\begin{figure}
-		\begin{minipage}{0.25\textwidth}
-			\scalebox{0.6}{
-				\begin{tikzpicture}[
-				level distance=2.0cm,
-				level 2/.style={sibling distance=1.7cm}
-				]
-				\node {$TNQ_4$}
-				child {node {\footnotesize \texttt{Orders}}}
-				child {node {$TQ_6$}
-					child {node {\footnotesize \texttt{LineItem}}}
-					child {node {\footnotesize \texttt{Part}}}
-					child {node {\footnotesize \texttt{PartSupp}}}
-				};
-				\node at (current bounding box.south)[below=20pt, text width=4cm, text centered]
-				{Dependency Graph};
-			\end{tikzpicture}
-			}
-		\end{minipage}
-		\begin{minipage}{0.74\textwidth}
-			\begin{figure}
-				\centering
-				\includegraphics[width=0.7\linewidth]{Figures/EnumerationTimes.png}
-			\end{figure}
-		\end{minipage}
-		\caption{Enumeration times of $TNQ_4$ \& $TQ_6$ compared between F-IVM and CaVieR.}
-	\end{figure}
-\end{frame}
-
-
-\begin{frame}
-	\frametitle{Experiment 8: Payload Data Structure}
-	\framesubtitle{TPC-H}
-	\begin{figure}
-		\begin{minipage}{0.25\textwidth}
-			\scalebox{0.6}{
-			\begin{tikzpicture}[
-				level distance=2.0cm,
-				level 2/.style={sibling distance=1.7cm}
-				]
-				\node {$TNQ_4$}
-				child {node {\footnotesize \texttt{Part}}}
-				child {node {$TQ_5$}
-					child {node {\footnotesize \texttt{LineItem}}}
-					child {node {\footnotesize \texttt{Orders}}}
-				}
-				child {node {\footnotesize \texttt{PartSupp}}};
-				\node at (current bounding box.south)[below=20pt, text width=4cm, text centered]
-				{Dependency Graph};
-			\end{tikzpicture}
-			}
-		\end{minipage}
-		\begin{minipage}{0.74\textwidth}
-			\begin{figure}
-				\centering
-				\includegraphics[width=\linewidth]{Figures/MapTypes_tpch.png}
-			\end{figure}
-		\end{minipage}
-		\caption{Comparison of update time \& enumeration delay of the different payload map types on a TPC-H query.}
-	\end{figure}
-\end{frame}
-
-
-\begin{frame}
-	\frametitle{Experiment 9: Many Queries}
+	\frametitle{Experiment 2: Many Queries}
 	\framesubtitle{TPC-H}
 	\begin{figure}
 		\begin{minipage}{0.25\textwidth}
@@ -1252,61 +921,61 @@ right color=transparent!100, left color=transparent!0]
 				\includegraphics[width=0.95\linewidth]{Figures/LargeExample1.png}
 			\end{figure}
 		\end{minipage}
-
+		
 	\end{figure}
 \end{frame}
 
 \begin{frame}
-	\frametitle{Experiment 9: Many Queries}
+	\frametitle{Experiment 2: Many Queries}
 	\framesubtitle{TPC-H}
 	\begin{figure}
 		\begin{minipage}{0.2\textwidth}
 			\vspace{2cm}
 			\scalebox{0.6}{
-					\begin{tikzpicture}[
-						level distance=1.0cm,
-						node distance=1.5cm
-						]
-						% Nodes
-						\node (TNQ19) {$TNQ_{19}$};
-						\node [below of=TNQ19] (TNQ18) {$TNQ_{18}$};
-						\node [below of=TNQ18] (TNQ17) {$TNQ_{17}$};
-						\node [below of=TNQ18, right of=TNQ18] (Part) {\footnotesize \texttt{Part}};
-						\node [right of=TNQ18] (Supplier) {\footnotesize {Supplier}};
-						\node [right of=Supplier] (TQ6) {$TQ_{6}$}; 
-						\node [below of=TNQ17] (TNQ15) {$TNQ_{15}$};
-						\node [right of=TNQ15] (TNQ16) {$TNQ_{16}$};
-						\node [below of=TNQ16, right of=TNQ16] (TQ14) {$TQ_{14}$};
-
-						
-						% Child nodes
-						\node [below of=TQ14,left of=TQ14] (LineItem) {\footnotesize \texttt{LineItem}};
-						\node [below of=TNQ15] (Customer) {\footnotesize \texttt{Customer}};
-						\node [right of=Customer] (Orders) {\footnotesize \texttt{Orders}};
-						\node [below of=TQ14, right of=TQ14] (PartSupp) {\footnotesize \texttt{PartSupp}};
-
-
-
-						% Edges
-						\draw (TNQ19) -- (TNQ18);
-						\draw (TNQ18) -- (TNQ17);
-						\draw (TNQ17) -- (TNQ16);
-						\draw (TNQ17) -- (TNQ15);
-						\draw (TNQ16) -- (TQ14);
-						\draw (TQ14) -- (LineItem);
-						\draw (TQ14) -- (PartSupp);
-						\draw (TNQ15) -- (Orders);
-						\draw (TNQ19) -- (Supplier);
-						\draw (TNQ18) -- (Part);
-						\draw (TQ14) -- (TQ6); 
-						\draw (TNQ16) -- (Orders); 
-						\draw (TNQ15) -- (Customer); 
-						\draw (TQ6) -- (Part); 
-												
-						% Dependency Graph label
-						\node at (current bounding box.south)[below=20pt, text width=4cm, text centered]
-						{Dependency Graph};
-					\end{tikzpicture}
+				\begin{tikzpicture}[
+					level distance=1.0cm,
+					node distance=1.5cm
+					]
+					% Nodes
+					\node (TNQ19) {$TNQ_{19}$};
+					\node [below of=TNQ19] (TNQ18) {$TNQ_{18}$};
+					\node [below of=TNQ18] (TNQ17) {$TNQ_{17}$};
+					\node [below of=TNQ18, right of=TNQ18] (Part) {\footnotesize \texttt{Part}};
+					\node [right of=TNQ18] (Supplier) {\footnotesize {Supplier}};
+					\node [right of=Supplier] (TQ6) {$TQ_{6}$}; 
+					\node [below of=TNQ17] (TNQ15) {$TNQ_{15}$};
+					\node [right of=TNQ15] (TNQ16) {$TNQ_{16}$};
+					\node [below of=TNQ16, right of=TNQ16] (TQ14) {$TQ_{14}$};
+					
+					
+					% Child nodes
+					\node [below of=TQ14,left of=TQ14] (LineItem) {\footnotesize \texttt{LineItem}};
+					\node [below of=TNQ15] (Customer) {\footnotesize \texttt{Customer}};
+					\node [right of=Customer] (Orders) {\footnotesize \texttt{Orders}};
+					\node [below of=TQ14, right of=TQ14] (PartSupp) {\footnotesize \texttt{PartSupp}};
+					
+					
+					
+					% Edges
+					\draw (TNQ19) -- (TNQ18);
+					\draw (TNQ18) -- (TNQ17);
+					\draw (TNQ17) -- (TNQ16);
+					\draw (TNQ17) -- (TNQ15);
+					\draw (TNQ16) -- (TQ14);
+					\draw (TQ14) -- (LineItem);
+					\draw (TQ14) -- (PartSupp);
+					\draw (TNQ15) -- (Orders);
+					\draw (TNQ19) -- (Supplier);
+					\draw (TNQ18) -- (Part);
+					\draw (TQ14) -- (TQ6); 
+					\draw (TNQ16) -- (Orders); 
+					\draw (TNQ15) -- (Customer); 
+					\draw (TQ6) -- (Part); 
+					
+					% Dependency Graph label
+					\node at (current bounding box.south)[below=20pt, text width=4cm, text centered]
+					{Dependency Graph};
+				\end{tikzpicture}
 			}
 		\end{minipage}
 		\begin{minipage}{0.79\textwidth}
@@ -1318,6 +987,264 @@ right color=transparent!100, left color=transparent!0]
 		
 	\end{figure}
 \end{frame}
+
+\begin{frame}
+	\frametitle{Experiment 3: Ordering the Data Stream}
+	\framesubtitle{TPC-H}
+	\begin{figure}
+
+
+		\begin{minipage}{0.25\textwidth}
+		\scalebox{0.6}{
+			\begin{tikzpicture}[
+				level distance=2.0cm,
+				level 2/.style={sibling distance=1.7cm}]
+				\node {$TNQ_4$}
+				child {node {\footnotesize \texttt{PartSupp}}}
+				child {node {$TQ_5$}
+					child {node {\footnotesize \texttt{Orders}}}
+					child {node {\footnotesize \texttt{LineItem}}}
+				}
+				child {node {\footnotesize \texttt{Part}}};
+				\node at (current bounding box.south)[below=20pt, text width=4cm, text centered]
+				{Dependency Graph};
+			\end{tikzpicture}
+		}
+		\end{minipage}
+		\begin{minipage}{0.74\textwidth}
+			\begin{figure}
+				\centering
+				\includegraphics[width=\linewidth]{Figures/OrderedVSUnordered.png}
+			\end{figure}
+		\end{minipage}
+		\caption{Comparison of the overall update times between ordered and unordered input relations, illustrated using query set $\mathcal{S}_5 = \{TNQ_4,\ TQ_5\}$}
+		\label{fig:orderedVSunordered}
+	\end{figure}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{Experiment 3: Ordering the Data Stream}
+	\framesubtitle{TPC-H}
+	\begin{figure}
+		\includegraphics[trim={1cm 1.5cm 1cm 1.5cm},clip,width=\linewidth]{Figures/Viz_TPCH_1.pdf}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Hypothesis}
+	\framesubtitle{Working Hypothesis}
+	\begin{block}{Hypothesis 3}
+			CaVieR outperforms F-IVM on Cascading Q-Hierarchical sets of queries with at least one non-q-hierarchical query and \textbf{unordered} input relations by having a lower update time.
+	\end{block}
+		\begin{block}{Hypothesis 2}
+		CaVieR outperforms F-IVM on Cascading Q-Hierarchical sets of queries with at least one non-q-hierarchical query by having a lower enumeration delay.
+	\end{block}
+	
+\end{frame}
+
+\subsection{}
+\begin{frame}
+	\frametitle{Experiment 4: Input Cardinalities}
+	\framesubtitle{TPC-H}
+	\begin{figure}
+
+		\begin{minipage}{0.25\textwidth}
+			\scalebox{0.6}{
+				\begin{tikzpicture}[
+					level distance=2.0cm,
+					level 2/.style={sibling distance=1.7cm}
+					]
+					\node (TNQ1) {$TNQ_1$}
+					child {node {\footnotesize \texttt{Part}}}
+					child {node (TQ) {TQ}
+						child {node {\footnotesize \texttt{Supplier}}}
+						child {node {\footnotesize \texttt{PartSupp}}}
+						child[dashed] {node (LineItem) {\footnotesize \texttt{LineItem}}}
+					};
+					\draw[dashed] (TNQ1) -- (LineItem) node[midway, above] {3};
+					\draw[dashed] (TQ) -- (LineItem) node[midway, left] {2};
+					\node at (current bounding box.south)[below=20pt, text width=4cm, text centered]
+					{Dependency Graph};
+				\end{tikzpicture}
+			}
+		\end{minipage}
+		\begin{minipage}{0.74\textwidth}
+			\begin{figure}
+				\centering
+				\includegraphics[width=\linewidth]{Figures/InputCardinalitiesTPCH.png}
+			\end{figure}
+		\end{minipage}
+	\caption{Illustrating the importance of the cardinalities of the individual relations on the update time of both queries in the query sets $\mathcal{S}_3 = \{TNQ_1, TQ_2\}$ \& $\mathcal{S}_4 = \{TNQ_1, TQ_3\}$ on the TPC-H dataset}
+\label{fig:inputCardinalitiesTpch}
+	\end{figure}
+\end{frame}
+
+\subsection{}
+\begin{frame}
+	\frametitle{Experiment 5: Number of Free Variables}
+	\framesubtitle{Retailer}
+	\begin{figure}
+		\begin{minipage}{0.25\textwidth}
+			\scalebox{0.6}{
+				\begin{tikzpicture}[
+					level distance=2.0cm,
+					level 2/.style={sibling distance=1.7cm}
+					]
+					\node (RNQ1) {$RNQ_1$}
+					child {node {\footnotesize \texttt{Item}}}
+					child {node (RQ2) {$RQ_2$}
+						child {node {\footnotesize \texttt{Inventory}}}
+						child {node {\footnotesize \texttt{Location}}}
+						child {node {\footnotesize \texttt{Weather}}}
+					};
+					\node at (current bounding box.south)[below=20pt, text width=4cm, text centered]
+					{Dependency Graph};
+				\end{tikzpicture}
+			}
+		\end{minipage}
+		\begin{minipage}{0.74\textwidth}
+			\begin{figure}
+				\centering
+				\includegraphics[width=\linewidth]{Figures/NrFreeVariables.png}
+			\end{figure}
+		\end{minipage}
+	\caption{Influence of the number of free non-join variables on the update time of F-IVM and CaVieR.}
+	\label{fig:NrFreeVars}
+	\end{figure}
+	
+\end{frame}
+
+\subsection{}
+\begin{frame}
+	\frametitle{Experiment 6: Influence of skewed Data}
+	\framesubtitle{TPC-H \& JCC-H}
+		\begin{figure}
+		\begin{minipage}{0.25\textwidth}
+			\scalebox{0.6}{
+				\begin{tikzpicture}[
+					level distance=2.0cm,
+					level 2/.style={sibling distance=1.7cm}
+					]
+					\node {$TNQ_4$}
+					child {node {\footnotesize \texttt{Part}}}
+					child {node {$TQ_5$}
+						child {node {\footnotesize \texttt{LineItem}}}
+						child {node {\footnotesize \texttt{Orders}}}
+					}
+					child {node {\footnotesize \texttt{PartSupp}}};
+					\node at (current bounding box.south)[below=20pt, text width=4cm, text centered]
+					{Dependency Graph};
+				\end{tikzpicture}
+			}
+		\end{minipage}
+		\begin{minipage}{0.74\textwidth}
+			\begin{figure}
+				\centering
+				\includegraphics[width=\linewidth]{Figures/TPCH_VS_JCCH.png}
+			\end{figure}
+		\end{minipage}
+		\caption{Comparing TPC-H against JCC-H using CaVieR and F-IVM.}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Experiment 7: Batch Update Sizes}
+	\framesubtitle{TPC-H}
+	\begin{figure}
+		\begin{minipage}{0.25\textwidth}
+			\scalebox{0.6}{
+				\begin{tikzpicture}[
+					level distance=2.0cm,
+					level 2/.style={sibling distance=1.7cm}
+					]
+					\node {$TNQ_1$}
+					child {node {\footnotesize \texttt{Part}}}
+					child {node {$TQ_2$}
+						child {node {\footnotesize \texttt{LineItem}}}
+						child {node {\footnotesize \texttt{Supplier}}}
+						child {node {\footnotesize \texttt{PartSupp}}}
+					};
+					\node at (current bounding box.south)[below=20pt, text width=4cm, text centered]
+					{Dependency Graph};
+				\end{tikzpicture}
+			}
+		\end{minipage}
+		\begin{minipage}{0.74\textwidth}
+			\begin{figure}
+				\centering
+				\includegraphics[width=\linewidth]{Figures/BatchSizes.png}
+			\end{figure}
+		\end{minipage}
+		\caption{Influence of batch sizes on update time. The batch size is given as the base 10 logarithm above each query.}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Experiment 8: Enumeration Delay}
+	\framesubtitle{TPC-H}
+		\begin{figure}
+		\begin{minipage}{0.25\textwidth}
+			\scalebox{0.6}{
+				\begin{tikzpicture}[
+				level distance=2.0cm,
+				level 2/.style={sibling distance=1.7cm}
+				]
+				\node {$TNQ_4$}
+				child {node {\footnotesize \texttt{Orders}}}
+				child {node {$TQ_6$}
+					child {node {\footnotesize \texttt{LineItem}}}
+					child {node {\footnotesize \texttt{Part}}}
+					child {node {\footnotesize \texttt{PartSupp}}}
+				};
+				\node at (current bounding box.south)[below=20pt, text width=4cm, text centered]
+				{Dependency Graph};
+			\end{tikzpicture}
+			}
+		\end{minipage}
+		\begin{minipage}{0.74\textwidth}
+			\begin{figure}
+				\centering
+				\includegraphics[width=0.7\linewidth]{Figures/EnumerationTimes.png}
+			\end{figure}
+		\end{minipage}
+		\caption{Enumeration times of $TNQ_4$ \& $TQ_6$ compared between F-IVM and CaVieR.}
+	\end{figure}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{Experiment 9: Payload Data Structure}
+	\framesubtitle{TPC-H}
+	\begin{figure}
+		\begin{minipage}{0.25\textwidth}
+			\scalebox{0.6}{
+			\begin{tikzpicture}[
+				level distance=2.0cm,
+				level 2/.style={sibling distance=1.7cm}
+				]
+				\node {$TNQ_4$}
+				child {node {\footnotesize \texttt{Part}}}
+				child {node {$TQ_5$}
+					child {node {\footnotesize \texttt{LineItem}}}
+					child {node {\footnotesize \texttt{Orders}}}
+				}
+				child {node {\footnotesize \texttt{PartSupp}}};
+				\node at (current bounding box.south)[below=20pt, text width=4cm, text centered]
+				{Dependency Graph};
+			\end{tikzpicture}
+			}
+		\end{minipage}
+		\begin{minipage}{0.74\textwidth}
+			\begin{figure}
+				\centering
+				\includegraphics[width=\linewidth]{Figures/MapTypes_tpch.png}
+			\end{figure}
+		\end{minipage}
+		\caption{Comparison of update time \& enumeration delay of the different payload map types on a TPC-H query.}
+	\end{figure}
+\end{frame}
+
 
 
 \begin{frame}
@@ -1350,6 +1277,7 @@ right color=transparent!100, left color=transparent!0]
 		\caption{Comparison of update time \& enumeration delay of the different payload map types on a TPC-H query.}
 	\end{figure}
 \end{frame}
+
 
 \section{Conclusion}
 \subsection{Key Findings}
