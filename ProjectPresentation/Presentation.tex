@@ -98,6 +98,10 @@
 %\usepackage{mathptmx} % Use the Times font for serif text
 \usepackage{palatino} % Use the Palatino font for serif text
 \usepackage{tikz}
+\usetikzlibrary{fadings}
+\tikzfading[name=fade left,
+right color=transparent!100, left color=transparent!0]
+\definecolor{transparent}{RGB}{255,255,255}
 
 %\usepackage{helvet} % Use the Helvetica font for sans serif text
 \usepackage[default]{opensans} % Use the Open Sans font for sans serif text
@@ -179,18 +183,190 @@
 %----------------------------------------------------------------------------------------
 %	PRESENTATION BODY SLIDES
 %----------------------------------------------------------------------------------------
+
 \section{Introduction}
+\begin{frame}
+	\frametitle{Introduction}
+	\framesubtitle{Real time monitoring}
+	\begin{figure}
+		\vspace{-0.3cm}
+		\begin{tikzpicture}
+			\node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[height=\textheight]{Figures/manager.png}};
+			\begin{scope}[x={(image.south east)},y={(image.north west)}]
+				\fill[white,path fading=fade left] (0,0) rectangle (0.5,1); % Gradient transparency
+				\node[anchor=west,align=left] at (0.02,0.5) { % Centered vertically
+					\begin{minipage}{0.4\textwidth} % Adjust the width
+						\begin{enumerate}
+							\item Different aspects of the data
+							\item Real time
+							\item Big Data
+						\end{enumerate}
+					\end{minipage}
+				};
+			\end{scope}
+		\end{tikzpicture}
+	\end{figure}
+\end{frame}
+
+\newsavebox{\ClassicalIVM}
+\begin{lrbox}{\ClassicalIVM}
+	\begin{tikzpicture}[scale=0.54, transform shape, level distance=1.5cm,
+		level 1/.style={sibling distance=0.75cm},
+		level 2/.style={sibling distance=0.55cm},
+		]
+		\node at (2,0.6) {$\textbf{Q}_1$};
+		
+		\node at (0,0) {$\delta \text{Q}^R_1$}[level 1/.style={sibling distance=0.75cm}]
+		child {node {$\delta$R}}
+		child {node {S}}
+		child {node {T}}
+		child {node {U}};
+		
+		\node at (2,-1) {$\dots$};
+		
+		\node at (4,0) {$\delta \text{Q}^U_1$}[level 1/.style={sibling distance=0.75cm}]
+		child {node {R}}
+		child {node {S}}
+		child {node {T}}
+		child {node {$\delta$U}};
+	\end{tikzpicture}
+\end{lrbox}
+
+\begin{frame}
+	\frametitle{Introduction}
+	\framesubtitle{Real time monitoring}
+	\begin{figure}
+		\vspace{-0.3cm}
+		\begin{tikzpicture}
+			\node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[height=\textheight]{Figures/manager.png}};
+			\begin{scope}[x={(image.south east)},y={(image.north west)}]
+				\fill[white,path fading=fade left] (0,0) rectangle (0.8,1); % Gradient transparency
+				\node[anchor=west,align=left] at (0.02,0.7) { % Centered vertically
+					\begin{minipage}{0.4\textwidth} % Adjust the width
+						First approach: \\ \textbf{Classical IVM}
+						\begin{itemize}
+							\item Origin of IVM
+							\item Not performant on large queries
+							\item Multiple delta view trees 
+						\end{itemize}
+						\usebox{\ClassicalIVM}
+					\end{minipage}
+				};
+			\end{scope}
+		\end{tikzpicture}
+	\end{figure}
+\end{frame}
+
+
+\newsavebox{\DBToaster}
+\begin{lrbox}{\DBToaster}
+	\begin{tikzpicture}[scale=0.54, transform shape, level distance=1.5cm,
+		level 1/.style={sibling distance=0.75cm},
+		level 2/.style={sibling distance=0.55cm},
+		]
+		\node at (0,-3.5) {$\delta \text{Q}^R_1$}[level 1/.style={sibling distance=1.5cm}]
+		child {node {$\delta V_{\text{RS}}$}
+			child {node {$\delta\text{R}$}}
+			child {node {S}}
+		}
+		child {node {$V_{\text{TU}}$}
+			child {node {T}}
+			child {node {U}}
+		};
+		
+		\node at (2,-5) {$\dots$};
+		
+		
+		\node at (4,-3.5) {$\delta \text{Q}^U_1$}[level 1/.style={sibling distance=1.5cm}]
+		child {node {$V_{\text{RS}}$}
+			child {node {R}}
+			child {node {S}}
+		}
+		child {node {$\delta V_{\text{TU}}$}
+			child {node {T}}
+			child {node {$\delta\text{U}$}}
+		};
+	\end{tikzpicture}
+\end{lrbox}
+
+\begin{frame}
+	\frametitle{Introduction}
+	\framesubtitle{Real time monitoring}
+	\begin{figure}
+		\vspace{-0.3cm}
+		\begin{tikzpicture}
+			\node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[height=\textheight]{Figures/manager.png}};
+			\begin{scope}[x={(image.south east)},y={(image.north west)}]
+				\fill[white,path fading=fade left] (0,0) rectangle (0.8,1); % Gradient transparency
+				\node[anchor=west,align=left] at (0.02,0.7) { % Centered vertically
+					\begin{minipage}{0.6\textwidth} % Adjust the width
+						Second approach: \\ \textbf{DBToaster}
+						\begin{itemize}
+							\item Improvement: \\Reused partial joins
+							\item Remaining challenges:\\ Multiple delta view trees 
+						\end{itemize}
+						\usebox{\DBToaster}
+					\end{minipage}
+				};
+			\end{scope}
+		\end{tikzpicture}
+	\end{figure}
+\end{frame}
+
+
+\newsavebox{\FIVM}
+\begin{lrbox}{\FIVM}
+	\begin{tikzpicture}[scale=0.54, transform shape, level distance=1.5cm,
+		level 1/.style={sibling distance=0.75cm},
+		level 2/.style={sibling distance=0.55cm},
+		]
+		\node at (2,-9.5) {$\delta \text{Q}_1$}[level 1/.style={sibling distance=2cm},level 2/.style={sibling distance=1.25cm}]
+		child {node {$\delta V_{\text{RS}}$}
+			child {node {$\delta\text{R}$}}
+			child {node {$\delta\text{S}$}}
+		}
+		child {node {$\delta V_{\text{TU}}$}
+			child {node {$\delta\text{T}$}}
+			child {node {$\delta\text{U}$}}
+		};
+	\end{tikzpicture}
+\end{lrbox}
+
+\begin{frame}
+	\frametitle{Introduction}
+	\framesubtitle{Real time monitoring}
+	\begin{figure}
+		\vspace{-0.3cm}
+		\begin{tikzpicture}
+			\node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[height=\textheight]{Figures/manager.png}};
+			\begin{scope}[x={(image.south east)},y={(image.north west)}]
+				\fill[white,path fading=fade left] (0,0) rectangle (0.8,1); % Gradient transparency
+				\node[anchor=west,align=left] at (0.02,0.7) { % Centered vertically
+					\begin{minipage}{0.6\textwidth} % Adjust the width
+						Third approach: \\ \textbf{F-IVM}
+						\begin{itemize}
+							\item Improvement: \\Single delta view tree
+							\item Remaining challenges:\\ Query set support
+						\end{itemize}
+						\usebox{\FIVM}
+					\end{minipage}
+				};
+			\end{scope}
+		\end{tikzpicture}
+	\end{figure}
+\end{frame}
+
 \begin{frame}
 		\vspace{-0.2cm}
 	\begin{figure}
 		\frametitle{Introduction}
-		\framesubtitle{Current State of IVM: Optimized for individual queries}
+		\framesubtitle{Development of IVM: Optimizing for individual queries}
 		\begin{tikzpicture}[scale=0.54, transform shape, level distance=1.5cm,
 			level 1/.style={sibling distance=1cm},
 			level 2/.style={sibling distance=0.55cm},
 			]
 			
-			\node at (-1,1) {Classical IVM};
+			\node at (-3,-1) {\textbf{Classical IVM}};
 			\node at (2,0.6) {$\textbf{Q}_1$};
 			\node at (10.5,0.6) {$\textbf{Q}_2$};
 			
@@ -209,7 +385,7 @@
 			child {node {$\delta$U}};
 			
 			\draw[->, thick] (2,-2) -- ++(0,-1);
-			\node at (-1, -2.5){DBToaster};
+			\node at (-3, -5){\textbf{DBToaster}};
 			
 			\node at (0,-3.5) {$\delta \text{Q}^R_1$}[level 1/.style={sibling distance=1.5cm}]
 			child {node {$\delta V_{\text{RS}}$}
@@ -282,7 +458,9 @@
 			\draw[->, thick] (4,-7) -- ++(-1.9,-1.5);
 			\draw[->, thick] (8,-7) -- ++(2.3,-1.5);
 			\draw[->, thick] (13,-7) -- ++(-2.3,-1.5);
-			\node at (-1, -7.75){F-IVM};
+			
+			
+			\node at (-3, -10.75){\textbf{F-IVM}};
 			
 			
 			\node at (2,-9.5) {$\delta \text{Q}_1$}[level 1/.style={sibling distance=2cm},level 2/.style={sibling distance=1.25cm}]
@@ -307,12 +485,6 @@
 			child {node {$\delta \text{W}$}};
 		\end{tikzpicture}
 	\end{figure}
-\end{frame}
-
-\begin{frame}
-	\frametitle{Introduction}
-	\framesubtitle{CaVieR: Extending F-IVM to multi query scenarios}
-	Change from Individual processing of Queries to Overlapping CaVieR execution
 \end{frame}
 
 \begin{frame}
