@@ -170,13 +170,6 @@
 
 % The table of contents outputs the sections and subsections that appear in your presentation, specified with the standard \section and \subsection commands. You may either display all sections and subsections on one slide with \tableofcontents, or display each section at a time on subsequent slides with \tableofcontents[pausesections]. The latter is useful if you want to step through each section and mention what you will discuss.
 
-\begin{frame}
-	\frametitle{Presentation Overview} % Slide title, remove this command for no title
-	
-	\tableofcontents % Output the table of contents (all sections on one slide)
-	%\tableofcontents[pausesections] % Output the table of contents (break sections up across separate slides)
-\end{frame}
-
 %----------------------------------------------------------------------------------------
 %	PRESENTATION BODY SLIDES
 %----------------------------------------------------------------------------------------
@@ -223,24 +216,23 @@
 
 \begin{frame}
 	\frametitle{Introduction}
-	\framesubtitle{Improving performance by joined query maintenance}
+	\framesubtitle{Redundant computation}
 	\begin{tikzpicture}[remember picture,overlay]
-		\node[anchor=south west, yshift=0cm] at (current page.south west) {\includegraphics[width=\paperwidth,trim={0 0 0 1.5cm},clip]{Figures/IntroCavierI.pdf}};
+		\node[anchor=south west, yshift=0cm] at (current page.south west) {\includegraphics[width=\paperwidth,trim={0 0 0 1.5cm},clip]{Figures/IntroCavier1.pdf}};
 	\end{tikzpicture}
 \end{frame}
 
 \begin{frame}
 	\frametitle{Introduction}
-	\framesubtitle{CaVieR}
+	\framesubtitle{Improving performance by joined query maintenance}
 	\begin{tikzpicture}[remember picture,overlay]
-		\node[anchor=south west, yshift=0cm] at (current page.south west) {\includegraphics[width=\paperwidth,trim={0 0 0 1.5cm},clip]{Figures/IntroCavierII.pdf}};
+		\node[anchor=south west, yshift=0cm] at (current page.south west) {\includegraphics[width=\paperwidth,trim={0 0 0 1.5cm},clip]{Figures/IntroCavier2.pdf}};
 	\end{tikzpicture}
 \end{frame}
 
 
-\section{Foundations} 
 \begin{frame}
-	\frametitle{Foundation}
+	\frametitle{Example}
 	\framesubtitle{Query Rewriting}
 		\begin{align*}
 			Q_2(y,z) =&\ R_1(x, y), R_2(y,z,w,v), R_3(y,w)\\
@@ -250,36 +242,77 @@
 
 \end{frame}
 
-\begin{frame}
-	\frametitle{Foundation}
-	\framesubtitle{Query Rewriting}
-			Following [Geck et al., 2022]\footnote{Geck, G., Keppeler, J., Schwentick, T., and Spinrath, C. (2022). Rewriting with acyclic queries: Mind your head. CoRR, abs/2201.05129.}:
-	\begin{align*}
-		Q_2(y,z) =&\ \colorbox{cyan}{\mbox{$R_1(x, y)$}}, \colorbox{yellow}{\mbox{$R_2(y,z,w,v), R_3(y,w)$}}\\
-		Q_1(y,w,z) =&\ \colorbox{yellow}{\mbox{$R_2(y,z,w,v), R_3(y,w)$}}\\
-		%			Q_1'(y,z) =&\ Q_2(y,w,z), R_1(x, y)
-	\end{align*}
-	
-\end{frame}
+%\begin{frame}
+%	\frametitle{Foundation}
+%	\framesubtitle{Query Rewriting}
+%			Following [Geck et al., 2022]\footnote{Geck, G., Keppeler, J., Schwentick, T., and Spinrath, C. (2022). Rewriting with acyclic queries: Mind your head. CoRR, abs/2201.05129.}:
+%	\begin{align*}
+%		Q_2(y,z) =&\ \colorbox{cyan}{\mbox{$R_1(x, y)$}}, \colorbox{yellow}{\mbox{$R_2(y,z,w,v), R_3(y,w)$}}\\
+%		Q_1(y,w,z) =&\ \colorbox{yellow}{\mbox{$R_2(y,z,w,v), R_3(y,w)$}}\\
+%		%			Q_1'(y,z) =&\ Q_2(y,w,z), R_1(x, y)
+%	\end{align*}
+%	
+%\end{frame}
+
+
 
 \begin{frame}
-	\frametitle{Foundations}
+	\frametitle{Example}
 	\framesubtitle{Query Rewriting}
-	\begin{block}{Homomorphism [Chandra and Merlin, 1977]}
-		$Q_1 \sqsupseteq Q_2$ implies that there is a mapping $h: \texttt{vars}(Q_2) \rightarrow \texttt{vars}(Q_1)$ such that $h(\texttt{body}(Q_2)) \subseteq \texttt{body}(Q_1)$ and $h(\texttt{head}(Q_2)) \subseteq \texttt{head}(Q_1)$. 
-	\end{block}
-\end{frame}
-
-\begin{frame}
-	\frametitle{Foundation}
-	\framesubtitle{Query Rewriting}
-	
 	\begin{align*}
 		Q_2(y,z) =&\ R_1(x, y), R_2(y,z,w,v), R_3(y,w)\\
 		Q_1(y,w,z) =&\ R_2(y,z,w,v), R_3(y,w)\\\\
 		Q_2'(y,z) =&\ R_1(x, y), Q_1(y,w,z)
 	\end{align*}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+	\framesubtitle{Query Rewriting}
+	\vspace{-0.4cm}
+	\begin{align*}
+		Q_1(y,w,z) =&\ R_2(y,z,w,v), R_3(y,w)\\
+		Q_2'(y,z) =&\ R_1(x, y), Q_1(y,w,z)
+	\end{align*}
+	\begin{minipage}{0.45\textwidth}
+		\centering
+			\begin{tikzpicture}[
+			level distance=1.5cm,
+			level 2/.style={sibling distance=1.7cm}]
+			\node {$Q_2'$}
+			child {node {\footnotesize \texttt{$R_1$}}}
+			child {node {$Q_1$}
+				child {node {\footnotesize \texttt{$R_2$}}}
+				child {node {\footnotesize \texttt{$R_3$}}}
+			};
+		\end{tikzpicture}
+	\end{minipage}
+	\begin{minipage}{0.45\textwidth}
+		\centering
+		\begin{tikzpicture}[
+			level distance=1cm,
+			level 2/.style={sibling distance=1cm},
+			level 3/.style={level distance=1.2cm},
+			level 4/.style={level distance=1cm}
+			]
+			\node {$V_{R1Q1}^{@y}$}
+			child {node {$V_{R1}^{@x}$}
+				child {node {\footnotesize \texttt{$R_1$}}}
+			}
+			child {node {$V_{Q1}^{@wz}$}
+				child {node {\footnotesize \texttt{$Q_1$}}
+					child[dashed] {node {$V_{R2R3}^{@yw}$}
+						child[solid] {node {$V_{R2}^{@zv}$}
+							child{node{\footnotesize \texttt{$R_2$}}}
+						}
+						child[solid]{node{\footnotesize \texttt{$R_3$}}}
+					}
+				}
+			};
+		\end{tikzpicture}
+	\end{minipage}
 	
+
 \end{frame}
 
 %\begin{frame}
@@ -446,7 +479,22 @@
 %		$w = 1, \delta=0$ 
 %	\end{block}
 %\end{frame}
-
+\begin{frame}
+	\frametitle{CaVieR}
+	\framesubtitle{Definition}
+	Given a set of Cascading Q-Hierarchical Queries, CaVieR:
+	\begin{enumerate}
+		\item  computes a Cascading Q-Hierarchical Rewriting
+		\item  generates a joined view tree
+		\item  supports dynamic evaluation with
+		\begin{itemize}
+			\item constant update time
+			\item constant enumeration delay
+		\end{itemize}
+	\end{enumerate}
+	
+	Therefor, CaVieR can be asymptotically faster than individual F-IVM instances
+\end{frame}
 
 
 \section{CaVieR}
@@ -455,8 +503,8 @@
 	\frametitle{CaVieR}
 	\framesubtitle{Aim of the Thesis}
 	\begin{enumerate}
-		\item Implement CaVieR
-		\item Proof correctness \& completeness
+		\item Theoretical Algorithm CaVieR
+		\item Practical Implementation of CaVieR
 		\item Test CaVieR on synthetic and real-world datasets
 	\end{enumerate}
 \end{frame}
@@ -464,26 +512,24 @@
 \subsection{Algorithm}
 \begin{frame}
 	\frametitle{CaVieR }
-	\framesubtitle{Structure}
-	\begin{block}{Parts}
-		\begin{enumerate}
-			\item Q-Hierarchical Rewriting
-			\begin{enumerate}
-				\item Single Query Rewriting
-				\item Query Set Rewriting
-			\end{enumerate}
-			\item Combined View Tree
-			\item Dynamic Evaluation
-		\end{enumerate}
-	\end{block}
+	\framesubtitle{Algorithm}
+	\centering
+	\includegraphics[height=0.8\textheight]{Figures/Process.pdf}
 \end{frame}
 
+\begin{frame}
+	\frametitle{CaVieR}
+	\framesubtitle{Homomorphism}
+	\begin{block}{Homomorphism [Chandra and Merlin, 1977]}
+		$Q_1 \sqsupseteq Q_2$ implies that there is a mapping $h: \texttt{vars}(Q_2) \rightarrow \texttt{vars}(Q_1)$ such that $h(\texttt{body}(Q_2)) \subseteq \texttt{body}(Q_1)$ and $h(\texttt{head}(Q_2)) \subseteq \texttt{head}(Q_1)$. 
+	\end{block}
+\end{frame}
 
 \begin{frame}
 	\frametitle{CaVieR}
 	\framesubtitle{Single Query Rewriting}
 	\begin{algorithm}[H]
-		\caption{Single Rewriting}\label{alg:SingleRewriting}
+		\caption{Single Rewriting (\textit{Simplified})}\label{alg:SingleRewriting}
 		\begin{algorithmic}[1]
 			\Function{SingleRewriting}{views: Set[Query], q: Query}
 			\For{$(A_1,...,A_m) \in Partitions(body(q))$}
@@ -503,12 +549,25 @@
 	\footnotetext{Cover Partition by Geck, G., Keppeler, J., Schwentick, T., and Spinrath, C. (2022). Rewriting with acyclic queries: Mind your head. CoRR, abs/2201.05129.}
 \end{frame}
 
+\begin{frame}
+	\frametitle{CaVieR}
+	\framesubtitle{Single Query Rewriting}
+	\begin{figure}
+		\begin{align*}
+			Q_2(x,y,z,w) &= R_1(x,y), R_2(y,z), R_3(z,w) &\\
+			Q_3(y,z,w) &= R_2(y,z), R_3(z,w)&\\\\
+			Q_2'(x,y,z,w)& = Q_3(y,z,w), R_1(x,y)&
+		\end{align*}
+		\vspace{1cm}
+		Solution: $\{Q_2', Q_3\}$
+	\end{figure}
+\end{frame}
 
 \begin{frame}
 	\frametitle{CaVieR}
 	\framesubtitle{Query Set Rewriting}
 	\begin{algorithm}[H]
-		\caption{All Rewritings}\label{alg:AllRewriting}
+		\caption{All Rewritings (\textit{Simplified})}\label{alg:AllRewriting}
 		\begin{algorithmic}[1]
 			\Function{AllRewritings}{queries: Set[Query]}
 			\For{$query_i \in queries$}
@@ -595,16 +654,36 @@
 		\end{figure}
 \end{frame}
 
-\subsection{Dynamic Evaluation using Cascading View Trees}
 \begin{frame}
 	\frametitle{CaVieR}
 	\framesubtitle{Dynamic Evaluation using Cascading View Trees}
-	\begin{block}{Updates}
-		Only relations (not views / queries) receive updates. These updates are only propagated in rewritten queries containing them
-	\end{block}
-	\begin{block}{Enumeration}
-		Enumeration follows the topological order of the queries. Tuple enumerated in a query are inserted as updates into dependant queries
-	\end{block}
+	\begin{figure}
+		\begin{minipage}{0.5\textwidth}
+			\begin{block}{Updates}
+				Only relations (not views / queries) receive updates. These updates are only propagated in rewritten queries containing them
+			\end{block}
+		\end{minipage}
+		\begin{minipage}{0.49\textwidth}
+			\vspace{-0.8cm}
+			\includegraphics[width=1.1\linewidth]{Figures/CombinedViewTree.pdf}
+		\end{minipage}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\frametitle{CaVieR}
+	\framesubtitle{Dynamic Evaluation using Cascading View Trees}
+	\begin{figure}
+		\begin{minipage}{0.5\textwidth}
+		\begin{block}{Enumeration}
+			Enumeration follows the topological order of the queries. Tuple enumerated in a query are inserted as updates into dependant queries
+		\end{block}
+		\end{minipage}
+		\begin{minipage}{0.49\textwidth}
+			\vspace{-0.8cm}
+			\includegraphics[width=1.1\linewidth]{Figures/CombinedViewTree.pdf}
+		\end{minipage}
+	\end{figure}
 \end{frame}
 
 
@@ -626,8 +705,11 @@
 
 \subsection{Experiments}
 \begin{frame}
-	\frametitle{Experiments}
+	\frametitle{Implementation \& Experiments}
 	\framesubtitle{Datasets \& Queries}
+	\textbf{Implementation}\\
+	Extension of F-IVM, which is based on DBToaster\\
+	\vspace{0.1cm}
 	\textbf{Datasets}
 	\begin{itemize}
 		\item TPC-H	  (T...)
@@ -647,29 +729,6 @@
 	
 	\vspace{1em}
 	28 Queries total
-\end{frame}
-
-\begin{frame}
-	\frametitle{Experiments}
-	\framesubtitle{Dimensions}
-	\begin{itemize}
-		\item Data parameters
-		\begin{itemize}
-			\item Datastream ordering
-			\item Cardinalities of the input relations
-			\item Value Distribution
-		\end{itemize}
-		\item Implementation parameters
-		\begin{itemize}
-			\item Batch size
-			\item Payload data structure
-		\end{itemize}
-		\item Query parameters
-		\begin{itemize}
-			\item Number of queries
-			\item Number of free variables
-		\end{itemize}
-	\end{itemize}
 \end{frame}
 
 
@@ -872,6 +931,29 @@
 		\end{minipage}
 		
 	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Experiments}
+	\framesubtitle{Dimensions}
+	\begin{itemize}
+		\item Data parameters
+		\begin{itemize}
+			\item Datastream ordering
+			\item Cardinalities of the input relations
+			\item Value Distribution
+		\end{itemize}
+		\item Implementation parameters
+		\begin{itemize}
+			\item Batch size
+			\item Payload data structure
+		\end{itemize}
+		\item Query parameters
+		\begin{itemize}
+			\item Number of queries
+			\item Number of free variables
+		\end{itemize}
+	\end{itemize}
 \end{frame}
 
 \begin{frame}
