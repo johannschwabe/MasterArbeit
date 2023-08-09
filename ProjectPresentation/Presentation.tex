@@ -181,6 +181,7 @@
 	\begin{tikzpicture}[remember picture,overlay]
 		\node[anchor=south west, yshift=0cm] at (current page.south west) {\includegraphics[width=\paperwidth,trim={0 0 0 1.5cm},clip]{Figures/IntroStart.pdf}};
 	\end{tikzpicture}
+		\footnotetext{\tiny{Image by @kamrulhkhkhk https://de.freepik.com}}
 \end{frame}
 
 \begin{frame}
@@ -598,7 +599,7 @@
 			Q_1'(x,y,z,w,v)& = Q_2(x,y,z,w), R_4(w,v)&\\
 			Q_2'(x,y,z,w)& = Q_3(y,z,w), R_1(x,y)&\\
 			Q_2''(x,y,z,w)& = Q_4(x,y,z), R_3(z,w)&\\
-			Q_2'''(x,y,z,w)& = Q_3(y,z,w), Q_4(x,y,z), R_3(z,w)& \textit{Set semantics}\\
+			Q_2'''(x,y,z,w)& = Q_3(y,z,w), Q_4(x,y,z)& \textit{Set semantics}\\
 		\end{align*}
 		
 		$\{Q_1', Q_2', Q_3, Q_4\}$, $\{Q_1', Q_2'', Q_3, Q_4\}$ and $\{Q_1', Q_2''', Q_3, Q_4\}$.
@@ -686,23 +687,6 @@
 	\end{figure}
 \end{frame}
 
-
-
-\section{Experiments}
-\subsection{Hypothesis}
-\begin{frame}
-	\frametitle{Experiments}
-	\framesubtitle{Working Hypothesis}
-	\begin{block}{Hypothesis 1 }\label{hyp:initialUpdate}
-		CaVieR outperforms F-IVM on Cascading Q-Hierarchical sets of queries with at least one non-q-hierarchical query by having a lower \textbf{update} time.
-	\end{block}
-	
-	\begin{block}{Hypothesis 2}\label{hyp:initialEnumeration}
-		CaVieR outperforms F-IVM on Cascading Q-Hierarchical sets of queries with at least one non-q-hierarchical query by having a lower \textbf{enumeration} delay.
-	\end{block}
-
-\end{frame}
-
 \subsection{Experiments}
 \begin{frame}
 	\frametitle{Implementation \& Experiments}
@@ -721,15 +705,32 @@
 	\vspace{0.5em}
 	\begin{tabular}{c|c|c}
 		$TNQ_4$ & TPC-H & Non Q-Hierarchical \\
-		  \addlinespace[0.5em]
+		\addlinespace[0.5em]
 		\hline
-		  \addlinespace[0.5em]
+		\addlinespace[0.5em]
 		$JQ_2$ & JCC-H & Q-Hierarchical \\
 	\end{tabular}
 	
 	\vspace{1em}
 	28 Queries total
 \end{frame}
+
+\section{Experiments}
+\subsection{Hypothesis}
+\begin{frame}
+	\frametitle{Experiments}
+	\framesubtitle{Working Hypothesis}
+	\begin{block}{Hypothesis 1 }\label{hyp:initialUpdate}
+		CaVieR outperforms F-IVM on Cascading Q-Hierarchical sets of queries with at least one non-q-hierarchical query by having a lower \textbf{update} time.
+	\end{block}
+	
+	\begin{block}{Hypothesis 2}\label{hyp:initialEnumeration}
+		CaVieR outperforms F-IVM on Cascading Q-Hierarchical sets of queries with at least one non-q-hierarchical query by having a lower \textbf{enumeration} delay.
+	\end{block}
+
+\end{frame}
+
+
 
 
 \begin{frame}
@@ -886,7 +887,7 @@
 					\node [below of=TNQ19] (TNQ18) {$TNQ_{18}$};
 					\node [below of=TNQ18] (TNQ17) {$TNQ_{17}$};
 					\node [below of=TNQ18, right of=TNQ18] (Part) {\footnotesize \texttt{Part}};
-					\node [right of=TNQ18] (Supplier) {\footnotesize {Supplier}};
+					\node [right of=TNQ18] (Supplier) {\footnotesize \texttt{Supplier}};
 					\node [right of=Supplier] (TQ6) {$TQ_{6}$}; 
 					\node [below of=TNQ17] (TNQ15) {$TNQ_{15}$};
 					\node [right of=TNQ15] (TNQ16) {$TNQ_{16}$};
