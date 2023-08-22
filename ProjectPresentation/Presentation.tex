@@ -99,11 +99,20 @@
 \usepackage{palatino} % Use the Palatino font for serif text
 \usepackage{tikz}
 \usepackage{algorithm}
+\usepackage{array}
 \usepackage[commentColor=grey,indLines=false,rightComments=false,noEnd=true]{algpseudocodex}
+\usetikzlibrary{positioning, shapes.arrows, calc, fit, backgrounds}
 \usepackage{helvet} % Use the Helvetica font for sans serif text
 %\usepackage[default]{opensans} % Use the Open Sans font for sans serif text
 %\usepackage[default]{FiraSans} % Use the Fira Sans font for sans serif text
 %\usepackage[default]{lato} % Use the Lato font for sans serif text
+
+\newcommand\pro{\item[$+$]}
+\newcommand\con{\item[$-$]}
+\definecolor{arrowcolor}{RGB}{197,224,180}
+\definecolor{boxcolor}{RGB}{143,170,220}
+\definecolor{lightgreen}{RGB}{74, 255, 137}
+\definecolor{mixed}{RGB}{165, 225, 69}
 
 %----------------------------------------------------------------------------------------
 %	SELECT INNER THEME
@@ -142,7 +151,7 @@
 %	PRESENTATION INFORMATION
 %----------------------------------------------------------------------------------------
 
-\title[CAVIER]{CAVIER} % The short title in the optional parameter appears at the bottom of every slide, the full title in the main parameter is only on the title page
+\title[CaVieR]{CaVieR} % The short title in the optional parameter appears at the bottom of every slide, the full title in the main parameter is only on the title page
 
 \subtitle{CAscading VIew tRees} % Presentation subtitle, remove this command if a subtitle isn't required
 
@@ -174,61 +183,235 @@
 %	PRESENTATION BODY SLIDES
 %----------------------------------------------------------------------------------------
 
+
+
 \section{Introduction}
 \begin{frame}
 	\frametitle{Introduction}
 	\framesubtitle{Real time data analytics}
-	\begin{tikzpicture}[remember picture,overlay]
-		\node[anchor=south west, yshift=0cm] at (current page.south west) {\includegraphics[width=\paperwidth,trim={0 0 0 1.5cm},clip]{Figures/IntroStart.pdf}};
-	\end{tikzpicture}
-		\footnotetext{\tiny{Image by @kamrulhkhkhk https://de.freepik.com}}
+	\begin{enumerate}
+		\item Different aspects of the data
+		\item Real time
+		\item Big Data
+	\end{enumerate}
+	\footnotetext{\tiny{Image by @kamrulhkhkhk https://de.freepik.com}}
 \end{frame}
 
 \begin{frame}
 	\frametitle{Introduction}
 	\framesubtitle{Naive Approach}
-	\begin{tikzpicture}[remember picture,overlay]
-		\node[anchor=south west, yshift=0cm] at (current page.south west) {\includegraphics[width=\paperwidth,trim={0 0 0 1.5cm},clip]{Figures/IntroNaive.pdf}};
-	\end{tikzpicture}
+	Consider the query $Q$ which joins the four relations R, S, T and U:
+	$Q = R, S, T, U$\\
+	\vspace{1cm}
+	Naive approach: Recompute on change
+	\begin{enumerate}
+		\pro simple
+		\con very slow
+	\end{enumerate}
 \end{frame}
 \begin{frame}
 	\frametitle{Introduction}
 	\framesubtitle{Classical IVM}
-	\begin{tikzpicture}[remember picture,overlay]
-		\node[anchor=south west, yshift=0cm] at (current page.south west) {\includegraphics[width=\paperwidth,trim={0 0 0 1.5cm},clip]{Figures/IntroClassical.pdf}};
+	Consider the query $Q$ which joins the four relations R, S, T and U:
+	$Q = R, S, T, U$\\
+	\vspace{1cm}
+	Classical IVM
+	\begin{enumerate}
+		\pro only computes the change
+		\con still slow
+	\end{enumerate}
+	\begin{tikzpicture}
+		[level distance=2cm,
+		sibling distance=1cm]
+		\node {Q}
+		child {node {R}}
+		child {node {S}}
+		child {node {T}}
+		child {node {U}};
 	\end{tikzpicture}
+	\begin{tikzpicture}
+			[level distance=2cm,
+		sibling distance=1cm]
+		\node {\textcolor{blue}{$\delta$Q}}
+		child {node {\textcolor{blue}{$\delta$R}}}
+		child {node {S}}
+		child {node {T}}
+		child {node {U}};
+	\end{tikzpicture}
+%	\begin{tikzpicture}[remember picture,overlay]
+%		\node[anchor=south west, yshift=0cm] at (current page.south west) {\includegraphics[width=\paperwidth,trim={0 0 0 1.5cm},clip]{Figures/IntroClassical.pdf}};
+%	\end{tikzpicture}
 \end{frame}
 
 \begin{frame}
 	\frametitle{Introduction}
 	\framesubtitle{DBToaster}
-	\begin{tikzpicture}[remember picture,overlay]
-		\node[anchor=south west, yshift=0cm] at (current page.south west) {\includegraphics[width=\paperwidth,trim={0 0 0 1.5cm},clip]{Figures/IntroDBToaster.pdf}};
+	Consider the query $Q$ which joins the four relations R, S, T and U:
+	$Q = R, S, T, U$\\
+	\vspace{1cm}
+	DBToaster
+	\begin{enumerate}
+		\pro reuses partial joins
+		\con many views to maintain
+	\end{enumerate}
+	\begin{tikzpicture}
+		[level distance=2cm,
+		sibling distance=1cm]
+		\node {Q}
+		child {node {R}}
+		child {node {S}}
+		child {node {T}}
+		child {node {U}};
+	\end{tikzpicture}
+	\begin{tikzpicture}
+		[level distance=1.3cm,
+		sibling distance=1cm]
+		\node {\textcolor{blue}{$\delta$Q}}
+		child {node {\textcolor{blue}{$\delta$R}}}
+		child {node {$\text{V}_{\text{STU}}$}
+		child {node {S}}
+		child {node {T}}
+		child {node {U}}
+		};
+	\end{tikzpicture}
+	\begin{tikzpicture}
+		[level distance=1.3cm,
+		sibling distance=1cm]
+		\node {\textcolor{blue}{$\delta\text{V}_{\text{STU}}$}}
+		child {node {\textcolor{blue}{$\delta$S}}}
+		child {node {$\text{V}_{\text{TU}}$}
+			child {node {T}}
+			child {node {U}}
+		};
 	\end{tikzpicture}
 \end{frame}
 
 \begin{frame}
 	\frametitle{Introduction}
 	\framesubtitle{F-IVM}
-	\begin{tikzpicture}[remember picture,overlay]
-		\node[anchor=south west, yshift=0cm] at (current page.south west) {\includegraphics[width=\paperwidth,trim={0 0 0 1.5cm},clip]{Figures/IntroFIVM.pdf}};
+	Consider the query $Q$ which joins the four relations R, S, T and U:
+	$Q = R, S, T, U$\\
+	\vspace{1cm}
+	F-IVM
+	\begin{enumerate}
+		\pro fewer views to be maintained
+		\pro can be asymptotically faster
+		\con supports only a single query
+	\end{enumerate}
+	\begin{tikzpicture}
+		[level distance=1.3cm,
+		sibling distance=1.3cm,
+		level 2/.style={sibling distance=0.8cm}]
+		\node {Q}
+		child {node {$\text{V}_{\text{RS}}$}
+			child {node {R}}
+			child {node {S}}
+		}
+		child {node {$\text{V}_{\text{TU}}$}
+			child {node {T}}
+			child {node {U}}
+		};
+	\end{tikzpicture}
+	\begin{tikzpicture}
+		[level distance=1.3cm,
+		sibling distance=1.3cm,
+		level 2/.style={sibling distance=0.8cm}]
+		\node {\textcolor{blue}{$\delta$Q}}
+		child {node {\textcolor{blue}{$\delta\text{V}_{\text{RS}}$}}
+			child {node {\textcolor{blue}{$\delta$R}}}
+			child {node {S}}
+		}
+		child {node {$\text{V}_{\text{TU}}$}
+			child {node {T}}
+			child {node {U}}
+		};
 	\end{tikzpicture}
 \end{frame}
 
 \begin{frame}
 	\frametitle{Introduction}
 	\framesubtitle{Redundant computation}
-	\begin{tikzpicture}[remember picture,overlay]
-		\node[anchor=south west, yshift=0cm] at (current page.south west) {\includegraphics[width=\paperwidth,trim={0 0 0 1.5cm},clip]{Figures/IntroCavier1.pdf}};
+	Processing queries with idendical subtrees individually results in redundant computation\\
+	\vspace{1cm}
+		\begin{minipage}{0.49\textwidth}
+		\centering
+	\begin{tikzpicture}
+		[level distance=1.3cm,
+		sibling distance=1.3cm,
+		level 2/.style={sibling distance=0.8cm}]
+		\node {$\text{Q}_\text{1}$}
+		child {node {$\text{V}_{\text{RS}}$}
+			child {node {R}}
+			child {node {S}}
+		}
+		child {node {$\text{V}_{\text{TU}}$}
+			child {node {T}}
+			child {node {U}}
+		};
 	\end{tikzpicture}
+		\end{minipage}
+	\begin{minipage}{0.49\textwidth}
+	\centering
+	\begin{tikzpicture}
+		[level distance=1.3cm,
+		sibling distance=1.3cm,
+		level 2/.style={sibling distance=0.8cm}]
+		\node {$\text{Q}_\text{2}$}
+		child {node {$\text{V}_{\text{RS}}$}
+			child {node {R}}
+			child {node {S}}
+		}
+		child {node {$\text{V}_{\text{TU}}$}
+			child {node {T}}
+			child {node {U}}
+		}
+		child {node {W}};
+	\end{tikzpicture}
+		\end{minipage}
 \end{frame}
 
 \begin{frame}
 	\frametitle{Introduction}
-	\framesubtitle{Improving performance by joined query maintenance}
-	\begin{tikzpicture}[remember picture,overlay]
-		\node[anchor=south west, yshift=0cm] at (current page.south west) {\includegraphics[width=\paperwidth,trim={0 0 0 1.5cm},clip]{Figures/IntroCavier2.pdf}};
-	\end{tikzpicture}
+	\framesubtitle{Improving performance by shared query maintenance}
+	Reusing identical subtrees reduces redundant computation
+	
+	This can reduce the asymptotic complexity. In some cases, non q-hierarchical queries can be executed at the speed of q-hierarchical queries.\\
+	\vspace{1cm}
+	\begin{minipage}{0.49\textwidth}
+		\centering
+			\begin{tikzpicture}[
+			level distance=1.3cm,
+			level 1/.style={sibling distance=1.3cm},
+			level 2/.style={sibling distance=0.8cm}
+			]
+			
+			% Nodes
+			\node (Q1) {$\text{Q}_\text{1}$}
+			child {node (VRS) {$\text{V}_\text{RS}$}
+				child {node (R) {$\text{R}$}}
+				child {node (S) {$\text{S}$}}
+			}
+			child {node (VTU) {$\text{V}_\text{TU}$}
+				child {node (T) {$\text{T}$}}
+				child {node (U) {$\text{U}$}}
+			};
+		\end{tikzpicture}
+	\end{minipage}
+	\begin{minipage}{0.49\textwidth}
+				\centering
+		\begin{tikzpicture}[
+			level distance=1.3cm,
+			level 1/.style={sibling distance=1.3cm},
+			level 2/.style={sibling distance=0.8cm}
+			]
+			
+			% Nodes
+			\node (Q2) {$\text{Q}_\text{2}$}
+			child {node (Q1) {$\text{Q1}$}}
+			child {node (W) {$\text{W}$}};
+			
+		\end{tikzpicture}
+	\end{minipage}
 \end{frame}
 
 
@@ -236,8 +419,8 @@
 	\frametitle{Example}
 	\framesubtitle{Query Rewriting}
 		\begin{align*}
-			Q_2(y,z) =&\ R_1(x, y), R_2(y,z,w,v), R_3(y,w)\\
-			Q_1(y,w,z) =&\ R_2(y,z,w,v), R_3(y,w)\\
+			Q_2(y,z) =&\ R_1(x, y), \colorbox{yellow}{\mbox{$R_2(y,z,w,v), R_3(y,w)$}}\\
+			Q_1(y,w,z) =&\  \colorbox{yellow}{\mbox{$R_2(y,z,w,v), R_3(y,w)$}}\\
 %			Q_1'(y,z) =&\ Q_2(y,w,z), R_1(x, y)
 		\end{align*}
 
@@ -269,7 +452,7 @@
 
 \begin{frame}
 	\frametitle{Example}
-	\framesubtitle{Query Rewriting}
+	\framesubtitle{From dependency graph to a cascading view tree}
 	\vspace{-0.4cm}
 	\begin{align*}
 		Q_1(y,w,z) =&\ R_2(y,z,w,v), R_3(y,w)\\
@@ -486,7 +669,7 @@
 	Given a set of Cascading Q-Hierarchical Queries, CaVieR:
 	\begin{enumerate}
 		\item  computes a Cascading Q-Hierarchical Rewriting
-		\item  generates a joined view tree
+		\item  generates a cascading view tree
 		\item  supports dynamic evaluation with
 		\begin{itemize}
 			\item constant update time
@@ -504,9 +687,9 @@
 	\frametitle{CaVieR}
 	\framesubtitle{Aim of the Thesis}
 	\begin{enumerate}
-		\item Theoretical Algorithm CaVieR
-		\item Practical Implementation of CaVieR
-		\item Test CaVieR on synthetic and real-world datasets
+		\item Developping CaVieR
+		\item Implementing CaVieR
+		\item Testing CaVieR on synthetic and real-world datasets
 	\end{enumerate}
 \end{frame}
 
@@ -515,7 +698,7 @@
 	\frametitle{CaVieR }
 	\framesubtitle{Algorithm}
 	\centering
-	\includegraphics[height=0.8\textheight]{Figures/Process.pdf}
+	\includegraphics[height=0.8\textheight]{Figures/Algo.png}
 \end{frame}
 
 \begin{frame}
@@ -555,9 +738,9 @@
 	\framesubtitle{Single Query Rewriting}
 	\begin{figure}
 		\begin{align*}
-			Q_2(x,y,z,w) &= R_1(x,y), R_2(y,z), R_3(z,w) &\\
-			Q_3(y,z,w) &= R_2(y,z), R_3(z,w)&\\\\
-			Q_2'(x,y,z,w)& = Q_3(y,z,w), R_1(x,y)&
+			Q_2(x,y,z,w) &= R_1(x,y), \colorbox{lightgreen}{$R_2(y,z), R_3(z,w)$} &\\
+			Q_3(y,z,w) &=\colorbox{lightgreen}{$R_2(y,z), R_3(z,w)$}&\\\\
+			Q_2'(x,y,z,w)& = R_1(x,y), Q_3(y,z,w)&
 		\end{align*}
 		\vspace{1cm}
 		Solution: $\{Q_2', Q_3\}$
@@ -591,18 +774,70 @@
 	\frametitle{CaVieR}
 	\framesubtitle{Query Set Rewriting}
 	\begin{figure}
+		\begin{tabular}{cccccc}
+			$Q_1(x,y,z,w,v)$ &=& $R_1(x,y),$&$R_2(y,z),$& $R_3(z,w), $&$R_4(w,v)$\\
+			$Q_2(x,y,z,w)$ &=& $R_1(x,y),$&$R_2(y,z),$&$R_3(z,w)$&\\
+			$Q_3(y,z,w)$ &=&& $R_2(y,z),$&$ R_3(z,w)$&\\
+			$Q_4(x,y,z)$ &=& $R_1(x,y),$&$ R_2(y,z)$&&\\
+		\end{tabular}
+		\vspace{4cm}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\frametitle{CaVieR}
+	\framesubtitle{Query Set Rewriting}
+	\begin{figure}
+		\begin{tabular}{cccccc}
+			\color{red}$Q_1(x,y,z,w,v)$ &\color{red}=& \color{red}$R_1(x,y),$&\color{red}$R_2(y,z),$&\color{red} $R_3(z,w), $&\color{red}$R_4(w,v)$\\
+			$Q_2(x,y,z,w)$ &=& $R_1(x,y),$&$R_2(y,z),$&$R_3(z,w)$&\\
+			$Q_3(y,z,w)$ &=&& $R_2(y,z),$&$ R_3(z,w)$&\\
+			$Q_4(x,y,z)$ &=& $R_1(x,y),$&$ R_2(y,z)$&&\\
+		\end{tabular}
 		\begin{align*}
-			Q_1(x,y,z,w,v) &= R_1(x,y), R_2(y,z), R_3(z,w), R_4(w,v)&\\
-			Q_2(x,y,z,w) &= R_1(x,y), R_2(y,z), R_3(z,w) &\\
-			Q_3(y,z,w) &= R_2(y,z), R_3(z,w)&\\
-			Q_4(x,y,z) &= R_1(x,y), R_2(y,z)&\\\\
-			Q_1'(x,y,z,w,v)& = Q_2(x,y,z,w), R_4(w,v)&\\
-			Q_2'(x,y,z,w)& = Q_3(y,z,w), R_1(x,y)&\\
-			Q_2''(x,y,z,w)& = Q_4(x,y,z), R_3(z,w)&\\
-			Q_2'''(x,y,z,w)& = Q_3(y,z,w), Q_4(x,y,z)& \textit{Set semantics}\\
+			Q_1'(x,y,z,w,v) =&\ Q_2(x,y,z,w), R_4(w,v)&\\
 		\end{align*}
-		
-		$\{Q_1', Q_2', Q_3, Q_4\}$, $\{Q_1', Q_2'', Q_3, Q_4\}$ and $\{Q_1', Q_2''', Q_3, Q_4\}$.
+		\vspace{2cm}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\frametitle{CaVieR}
+	\framesubtitle{Query Set Rewriting}
+	\begin{figure}
+		\begin{tabular}{cccccc}
+			$Q_1(x,y,z,w,v)$ &=& $R_1(x,y),$&$R_2(y,z),$& $R_3(z,w), $&$R_4(w,v)$\\
+			\color{red}$Q_2(x,y,z,w)$ &\color{red}=& \color{red}$R_1(x,y),$&\color{red}$R_2(y,z),$&\color{red}$R_3(z,w)$&\\
+			$Q_3(y,z,w)$ &=&& $R_2(y,z),$&$ R_3(z,w)$&\\
+			$Q_4(x,y,z)$ &=& $R_1(x,y),$&$ R_2(y,z)$&&\\
+		\end{tabular}
+		\begin{align*}
+			\color{gray}Q_1'(x,y,z,w,v) =&\color{gray}\ Q_2(x,y,z,w), R_4(w,v)&\\
+			Q_2'(x,y,z,w) =&\ R_1(x,y), Q_3(y,z,w) &\\
+			Q_2''(x,y,z,w) =&\ Q_4(x,y,z), R_3(z,w)&\\
+			Q_2'''(x,y,z,w) =&\ Q_3(y,z,w), Q_4(x,y,z)& \textit{Set semantics}\\
+		\end{align*}
+	\end{figure}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{CaVieR}
+	\framesubtitle{Query Set Rewriting}
+	\begin{figure}
+		\begin{tabular}{cccccc}
+			$Q_1(x,y,z,w,v)$ &=& $R_1(x,y),$&$R_2(y,z),$& $R_3(z,w), $&$R_4(w,v)$\\
+			$Q_2(x,y,z,w)$ &=& $R_1(x,y),$&$R_2(y,z),$&$R_3(z,w)$&\\
+			$Q_3(y,z,w)$ &=&& $R_2(y,z),$&$ R_3(z,w)$&\\
+			$Q_4(x,y,z)$ &=& $R_1(x,y),$&$ R_2(y,z)$&&\\
+		\end{tabular}
+		\begin{align*}
+			Q_1'(x,y,z,w,v) =&\ Q_2(x,y,z,w), R_4(w,v)&\\
+			Q_2'(x,y,z,w) =&\ R_1(x,y), Q_3(y,z,w) &\\
+			Q_2''(x,y,z,w) =&\ Q_4(x,y,z), R_3(z,w)&\\
+			Q_2'''(x,y,z,w) =&\ Q_3(y,z,w), Q_4(x,y,z)& \textit{Set semantics}\\
+		\end{align*}
+		$\{Q_1', Q_2', Q_3, Q_4\}$, $\color{cyan}\{Q_1', Q_2'', Q_3, Q_4\}$ and $\{Q_1', Q_2''', Q_3, Q_4\}$.
 	\end{figure}
 \end{frame}
 
@@ -618,7 +853,7 @@
 
 \begin{frame}
 	\frametitle{CaVieR}
-	\framesubtitle{Combined View Tree}
+	\framesubtitle{Cascading View Tree}
 	\begin{figure}
 		\begin{minipage}{0.5\textwidth}
 			\begin{tikzpicture}[
@@ -626,21 +861,126 @@
 				level 2/.style={sibling distance=1.7cm}]
 				
 				\begin{scope}
-					\node {Q1}
-					child {node {\footnotesize \texttt{R4}}}
-					child {node {Q2}
-						child {node {\footnotesize \texttt{R3}}}
-						child {node {Q4}
-							child {node {\footnotesize \texttt{R1}}}
-							child {node {\footnotesize \texttt{R2}}}
+					\node {$Q_1$}
+					child {node {\footnotesize \texttt{$R_4$}}}
+					child {node {$Q_2$}
+						child {node {\footnotesize \texttt{$R_3$}}}
+						child {node {$Q_4$}
+							child {node {\footnotesize \texttt{$R_1$}}}
+							child {node {\footnotesize \texttt{$R_2$}}}
 						}
 					};
 				\end{scope}
 				
 				\begin{scope}[shift={(-1cm,-3cm)}] % Adjust the shift to position the second graph
-					\node {Q3}
-					child {node {\footnotesize \texttt{R2}}}
-					child {node {\footnotesize \texttt{R3}}};
+					\node {$Q_3$}
+					child {node {\footnotesize \texttt{$R_2$}}}
+					child {node {\footnotesize \texttt{$R_3$}}};
+				\end{scope}
+				
+				\useasboundingbox (current bounding box.north west) rectangle (current bounding box.south east);
+				\node at (current bounding box.south)[below=10pt, text width=9cm, text centered]
+				{Dependency Graph};
+			\end{tikzpicture}
+		\end{minipage}
+		\begin{minipage}{0.49\textwidth}
+			\textbf{Variable Order} for $Q_2(x,y,z,w) = Q_4(x,y,z), R_3(z,w)$:\\
+			\begin{tikzpicture}[
+				level distance=1cm,
+				sibling distance=0.7cm]
+				\node {$z$}
+				child {node {$x$}}
+				child {node {$y$}}
+				child {node {$w$}};
+			\end{tikzpicture}\\
+			\vspace{3cm}
+		\end{minipage}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\frametitle{CaVieR}
+	\framesubtitle{Cascading View Tree}
+	\begin{figure}
+		\begin{minipage}{0.5\textwidth}
+			\begin{tikzpicture}[
+				level distance=1.5cm,
+				level 2/.style={sibling distance=1.7cm}]
+				
+				\begin{scope}
+					\node {$Q_1$}
+					child {node {\footnotesize \texttt{$R_4$}}}
+					child {node {$Q_2$}
+						child {node {\footnotesize \texttt{$R_3$}}}
+						child {node {$Q_4$}
+							child {node {\footnotesize \texttt{$R_1$}}}
+							child {node {\footnotesize \texttt{$R_2$}}}
+						}
+					};
+				\end{scope}
+				
+				\begin{scope}[shift={(-1cm,-3cm)}] % Adjust the shift to position the second graph
+					\node {$Q_3$}
+					child {node {\footnotesize \texttt{$R_2$}}}
+					child {node {\footnotesize \texttt{$R_3$}}};
+				\end{scope}
+				
+				\useasboundingbox (current bounding box.north west) rectangle (current bounding box.south east);
+				\node at (current bounding box.south)[below=10pt, text width=9cm, text centered]
+				{Dependency Graph};
+			\end{tikzpicture}
+		\end{minipage}
+		\begin{minipage}{0.49\textwidth}
+			\textbf{Variable Order} for $Q_2(x,y,z,w) = Q_4(x,y,z), R_3(z,w)$:\\
+			\begin{tikzpicture}[
+				level distance=1cm,
+				sibling distance=0.7cm]
+				\node {$z$}
+				child {node {$x$}}
+				child {node {$y$}}
+				child {node {$w$}};
+			\end{tikzpicture}\\
+			\textbf{View Tree} for $Q_2$:\\
+			\begin{tikzpicture}[
+				level distance=1cm,
+				sibling distance=2cm]
+				\node {$V_{Q_4R_3}^{@z}()$}
+				child {node {$V_{Q_4}^{@xy}(z)$}
+					child {node {$Q_4(x,y,z)$}}
+				}
+				child {node {$V_{R_3}^{@w}(z)$}
+					child {node {$R_3(z,w)$}}
+				};
+			\end{tikzpicture}
+		\end{minipage}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\frametitle{CaVieR}
+	\framesubtitle{Cascading View Tree}
+	\begin{figure}
+		\begin{minipage}{0.5\textwidth}
+			\begin{tikzpicture}[
+				level distance=1.5cm,
+				level 2/.style={sibling distance=1.7cm}]
+				
+				\begin{scope}
+					\node {$Q_1$}
+					child {node {\footnotesize \texttt{$R_4$}}}
+					child {node {$Q_2$}
+						child {node {\footnotesize \texttt{$R_3$}}}
+						child {node {$Q_4$}
+							child {node {\footnotesize \texttt{$R_1$}}}
+							child {node {\footnotesize \texttt{$R_2$}}}
+						}
+					};
+				\end{scope}
+				
+				\begin{scope}[shift={(-1cm,-3cm)}] % Adjust the shift to position the second graph
+					\node {$Q_3$}
+					child {node {\footnotesize \texttt{$R_2$}}}
+					child {node {\footnotesize \texttt{$R_3$}}};
 				\end{scope}
 				
 				\useasboundingbox (current bounding box.north west) rectangle (current bounding box.south east);
@@ -650,10 +990,11 @@
 		\end{minipage}
 		\begin{minipage}{0.49\textwidth}
 			\vspace{-0.8cm}
-			\includegraphics[width=1.1\linewidth]{Figures/CombinedViewTree.pdf}
+			\includegraphics[width=\linewidth]{Figures/CombinedViewTree.pdf}
 		\end{minipage}
-		\end{figure}
+	\end{figure}
 \end{frame}
+
 
 \begin{frame}
 	\frametitle{CaVieR}
@@ -661,12 +1002,12 @@
 	\begin{figure}
 		\begin{minipage}{0.5\textwidth}
 			\begin{block}{Updates}
-				Only relations (not views / queries) receive updates. These updates are only propagated in rewritten queries containing them
+				Only relations (not views / queries) receive updates. These updates are only propagated in queries containing them.
 			\end{block}
 		\end{minipage}
 		\begin{minipage}{0.49\textwidth}
 			\vspace{-0.8cm}
-			\includegraphics[width=1.1\linewidth]{Figures/CombinedViewTree.pdf}
+			\includegraphics[width=\linewidth]{Figures/CombinedViewTree.pdf}
 		\end{minipage}
 	\end{figure}
 \end{frame}
@@ -677,12 +1018,12 @@
 	\begin{figure}
 		\begin{minipage}{0.5\textwidth}
 		\begin{block}{Enumeration}
-			Enumeration follows the topological order of the queries. Tuple enumerated in a query are inserted as updates into dependant queries
+			Enumeration follows the topological order of the queries. Output of a query is turned into a stream of inserts in the view tree of queries that depend on it.
 		\end{block}
 		\end{minipage}
 		\begin{minipage}{0.49\textwidth}
 			\vspace{-0.8cm}
-			\includegraphics[width=1.1\linewidth]{Figures/CombinedViewTree.pdf}
+			\includegraphics[width=\linewidth]{Figures/CombinedViewTree.pdf}
 		\end{minipage}
 	\end{figure}
 \end{frame}
@@ -703,12 +1044,10 @@
 	\vspace{1em}
 	\textbf{Queries}\\
 	\vspace{0.5em}
-	\begin{tabular}{c|c|c}
-		$TNQ_4$ & TPC-H & Non Q-Hierarchical \\
-		\addlinespace[0.5em]
-		\hline
-		\addlinespace[0.5em]
-		$JQ_2$ & JCC-H & Q-Hierarchical \\
+	\begin{tabular}{c!{\vrule width 2pt}c|c|c}
+		$TNQ_4$ & TPC-H & Non Q-Hierarchical  & 4 \rule{0pt}{2.5ex}\\
+		\hline \rule{0pt}{2.5ex}
+		$JQ_2$ & JCC-H & Q-Hierarchical & 2 \\
 	\end{tabular}
 	
 	\vspace{1em}
@@ -1277,13 +1616,66 @@
 	\frametitle{Future Work }
 	\framesubtitle{Comparing Rewritings}
 	\begin{align*}
-		Q_1(x,y,z,w) =&  R_1(x,y), R_2(y,z), R_3(z,w)\\
-		Q_2(x,y,z) =&  R_1(x,y), R_2(y,z)\\
-		Q_3(y,z,w)=&  R_2(y,z), R_3(z,w)\\\\
-		Q_1'(x,y,z,w) =& Q_2(x,y,z), R_3(z,w)\\
-		Q_1''(x,y,z,w) =&  R_1(x,y), Q_3(y,z,w)\\
-		Q_1'''(x,y,z,w) =&  Q_2(x,y,z), Q_3(y,z,w)
+		\colorbox{white}{$Q_1(x,y,z,w)$} =&\  R_1(x,y), R_2(y,z), R_3(z,w)\\
+		\colorbox{white}{$Q_2(x,y,z)$} =&\  R_1(x,y), R_2(y,z)\\
+		\colorbox{white}{$Q_3(y,z,w)$}=&\ R_2(y,z), R_3(z,w)\\\\
+		\color{white}\colorbox{white}{$Q_1'(x,y,z,w)$} =&\color{white}\ Q_2(x,y,z), R_3(z,w)\\
+		\color{white}\colorbox{white}{$Q_1''(x,y,z,w)$} =&\color{white}\ R_1(z,w), Q_3(x,y,z)\\
+		\color{white}\colorbox{white}{$Q_1'''(x,y,z,w)$} =& \color{white}\ \colorbox{white}{$Q_2(x,y,z)$}, \colorbox{white}{$Q_3(x,y,z)$}
 	\end{align*}
+\end{frame}
+\begin{frame}
+	\frametitle{Future Work }
+	\framesubtitle{Comparing Rewritings}
+	\begin{align*}
+		\colorbox{white}{$Q_1(x,y,z,w)$} =&  \colorbox{yellow}{$R_1(x,y), R_2(y,z)$}, R_3(z,w)\\
+		\colorbox{orange}{$Q_2(x,y,z)$} =& \colorbox{yellow}{$R_1(x,y), R_2(y,z)$}\\
+		\color{gray} \colorbox{white}{$Q_3(y,z,w)$} =&  \color{gray}\ R_2(y,z), R_3(z,w)\\\\
+		\colorbox{white}{$Q_1'(x,y,z,w)$} =& \colorbox{orange}{$Q_2(x,y,z)$}, R_3(z,w)\\
+		\color{white}\colorbox{white}{$Q_1''(x,y,z,w)$} =&\color{white}\ R_1(z,w), Q_3(x,y,z)\\
+		\color{white}\colorbox{white}{$Q_1'''(x,y,z,w)$} =& \color{white}\ \colorbox{white}{$Q_2(x,y,z)$}, \colorbox{white}{$Q_3(x,y,z)$}
+	\end{align*}
+\end{frame}
+\begin{frame}
+	\frametitle{Future Work }
+	\framesubtitle{Comparing Rewritings}
+	\begin{align*}
+		\colorbox{white}{$Q_1(x,y,z,w)$} =& R_1(x,y), \colorbox{lightgreen}{$R_2(y,z), R_3(z,w)$}\\
+		\color{gray}\colorbox{white}{$Q_2(x,y,z)$} =&  \color{gray}\ R_1(x,y), R_2(y,z)\\
+		\colorbox{cyan}{$Q_3(y,z,w)$} =& \colorbox{lightgreen}{$R_2(y,z), R_3(z,w)$}\\\\
+		\color{gray}\colorbox{white}{$Q_1'(x,y,z,w)$} =&\color{gray}\ Q_2(x,y,z), R_3(z,w)\\
+		\colorbox{white}{$Q_1''(x,y,z,w)$} =&\ R_1(z,w), \colorbox{cyan}{$Q_3(x,y,z)$}\\
+		\color{white}\colorbox{white}{$Q_1'''(x,y,z,w)$} =& \color{white}\ \colorbox{white}{$Q_2(x,y,z)$}, \colorbox{white}{$Q_3(x,y,z)$}
+	\end{align*}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Future Work }
+	\framesubtitle{Comparing Rewritings}
+	\begin{align*}
+		\colorbox{white}{$Q_1(x,y,z,w)$} =& \colorbox{yellow}{$R_1(x,y),$}\colorbox{mixed}{$R_2(y,z),$}\colorbox{lightgreen}{$R_3(z,w)$}\\
+		\colorbox{orange}{$Q_2(x,y,z)$} =& \colorbox{yellow}{$R_1(x,y), R_2(y,z)$}\\
+		\colorbox{cyan}{$Q_3(y,z,w)$} =& \colorbox{lightgreen}{$R_2(y,z), R_3(z,w)$}\\\\
+		\color{gray}\colorbox{white}{$Q_1'(x,y,z,w)$} =&\color{gray}\ Q_2(x,y,z), R_3(z,w)\\
+		\color{gray}\colorbox{white}{$Q_1''(x,y,z,w)$}  =&\color{gray}\ R_1(z,w), Q_3(x,y,z)\\
+		\colorbox{white}{$Q_1'''(x,y,z,w)$} =& \colorbox{orange}{$Q_2(x,y,z)$}, \colorbox{cyan}{$Q_3(x,y,z)$}
+	\end{align*}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Future Work }
+	\framesubtitle{Comparing Rewritings}
+	\begin{align*}
+		Q_1'(x,y,z,w) =& Q_2(x,y,z), R_3(z,w)\\
+		Q_1''(x,y,z,w)  =& R_1(z,w), Q_3(x,y,z)\\
+		Q_1'''(x,y,z,w) =& Q_2(x,y,z), Q_3(x,y,z)
+	\end{align*}
+	Which is the fastest ?
+	\begin{enumerate}
+		\item $\{Q_1', Q_2, Q_3\}$
+		\item $\{Q_1'', Q_2, Q_3\}$
+		\item $\{Q_1''', Q_2, Q_3\}$
+	\end{enumerate}
 \end{frame}
 
 \begin{frame}
