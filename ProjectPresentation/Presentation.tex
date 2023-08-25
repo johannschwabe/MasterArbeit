@@ -712,136 +712,426 @@
 \begin{frame}
 	\frametitle{CaVieR}
 	\framesubtitle{Single Query Rewriting}
-	\begin{algorithm}[H]
-		\caption{Single Rewriting (\textit{Simplified})}\label{alg:SingleRewriting}
-		\begin{algorithmic}[1]
-			\Function{SingleRewriting}{views: Set[Query], q: Query}
-			\For{$(A_1,...,A_m) \in Partitions(body(q))$}
-			\For{$A_i \in A_1,...,A_m$}
-			\State $morph_i \gets$ FindHomomorphism($A_i$, views)\footnotemark
-			\If{$morph_i$ == Null}
-			\State \textbf{break}
-			\EndIf
-			\EndFor
-			\If{isQHierarchical(\{$morph_1,\dots,morph_m$\})}
-			\State \textbf{report} \{$morph_1,\dots,morph_m$\}
-			\EndIf
-			\EndFor
-			\EndFunction
-		\end{algorithmic}
-	\end{algorithm}
-	\footnotetext{Cover Partition by Geck, G., Keppeler, J., Schwentick, T., and Spinrath, C. (2022). Rewriting with acyclic queries: Mind your head. CoRR, abs/2201.05129.}
+	\textbf{Input}: Query q, Set[Query] V
+	\begin{enumerate}
+		\item Iterate over each partition the body of q
+		\item Iterate over each element of the partition
+		\item Find homomorphism for the element to a query in V
+		\item If homomorphism is found for every element, check if the resulting query is q-hierarchical
+	\end{enumerate}
+	\textbf{Output}: Set[Queries] - all rewritings of q
+\end{frame}
+
+
+%\begin{frame}
+%	\frametitle{CaVieR}
+%	\framesubtitle{Single Query Rewriting}
+%	\begin{algorithm}[H]
+%		\caption{Single Rewriting (\textit{Simplified})}\label{alg:SingleRewriting}
+%		\begin{algorithmic}[1]
+%			\Function{SingleRewriting}{views: Set[Query], q: Query}
+%			\For{$(A_1,...,A_m) \in Partitions(body(q))$}
+%			\For{$A_i \in A_1,...,A_m$}
+%			\State $morph_i \gets$ FindHomomorphism($A_i$, views)\footnotemark
+%			\If{$morph_i$ == Null}
+%			\State \textbf{break}
+%			\EndIf
+%			\EndFor
+%			\If{isQHierarchical(\{$morph_1,\dots,morph_m$\})}
+%			\State \textbf{report} \{$morph_1,\dots,morph_m$\}
+%			\EndIf
+%			\EndFor
+%			\EndFunction
+%		\end{algorithmic}
+%	\end{algorithm}
+%	\footnotetext{Cover Partition by Geck, G., Keppeler, J., Schwentick, T., and Spinrath, C. (2022). Rewriting with acyclic queries: Mind your head. CoRR, abs/2201.05129.}
+%\end{frame}
+\begin{frame}
+	\frametitle{CaVieR}
+	\framesubtitle{Single Query Rewriting Example}
+	\begin{align*}
+		Q_2(x,y,z,w) &= R_1(x,y), R_2(y,z), R_3(z,w) &\\
+		Q_3(y,z,w) &= R_2(y,z), R_3(z,w)&\\
+	\end{align*}
+	\textbf{Input}: $Q_2$, $\{Q_3\}$
+	\vspace{4cm}
 \end{frame}
 
 \begin{frame}
 	\frametitle{CaVieR}
-	\framesubtitle{Single Query Rewriting}
-	\begin{figure}
-		\begin{align*}
-			Q_2(x,y,z,w) &= R_1(x,y), \colorbox{lightgreen}{$R_2(y,z), R_3(z,w)$} &\\
-			Q_3(y,z,w) &=\colorbox{lightgreen}{$R_2(y,z), R_3(z,w)$}&\\\\
-			Q_2'(x,y,z,w)& = R_1(x,y), Q_3(y,z,w)&
-		\end{align*}
-		\vspace{1cm}
-		Solution: $\{Q_2', Q_3\}$
-	\end{figure}
+	\framesubtitle{Single Query Rewriting Example}
+	\begin{align*}
+		Q_2(x,y,z,w) &= R_1(x,y), R_2(y,z), R_3(z,w) &\\
+		Q_3(y,z,w) &= R_2(y,z), R_3(z,w)&\\
+	\end{align*}
+	\textbf{Input}: $Q_2$, $\{Q_3\}$
+	\begin{enumerate}
+		\item Iterate over each partition the body of q
+	\end{enumerate}
+	$Partitioning_1 = \{\{R_1\}, \{R_2, R_3\}\}$
+	\vspace{3cm}
+\end{frame}
+\begin{frame}
+	\frametitle{CaVieR}
+	\framesubtitle{Single Query Rewriting Example}
+	\begin{align*}
+		Q_2(x,y,z,w) &= R_1(x,y), R_2(y,z), R_3(z,w) &\\
+		Q_3(y,z,w) &= R_2(y,z), R_3(z,w)&\\
+	\end{align*}
+	\textbf{Input}: $Q_2$, $\{Q_3\}$\\
+	\textbf{Variables}:
+	$Partitioning_1 = \{\{R_1\}, \{R_2, R_3\}\}$
+	\begin{enumerate}
+		\setcounter{enumi}{1}
+		\item Iterate over each element of the partition
+	\end{enumerate}
+	$element_1 = \{R_1\}$
+	\vspace{3cm}
+\end{frame}
+
+\begin{frame}
+	\frametitle{CaVieR}
+	\framesubtitle{Single Query Rewriting Example}
+	\begin{align*}
+		Q_2(x,y,z,w) &= R_1(x,y), R_2(y,z), R_3(z,w) &\\
+		Q_3(y,z,w) &= R_2(y,z), R_3(z,w)&\\
+	\end{align*}
+	\textbf{Input}: $Q_2$, $\{Q_3\}$\\
+	\textbf{Variables}:
+	$Partitioning_1 = \{\{R_1\}, \{R_2, R_3\}\}$,
+	$element_1 = \{R_1\}$
+	\begin{enumerate}
+		\setcounter{enumi}{2}
+		\item Find homomorphism for the element to a query in V
+	\end{enumerate}
+	Size one elements are ignored
+	\vspace{3cm}
+\end{frame}
+
+\begin{frame}
+	\frametitle{CaVieR}
+	\framesubtitle{Single Query Rewriting Example}
+	\begin{align*}
+		Q_2(x,y,z,w) &= R_1(x,y), R_2(y,z), R_3(z,w) &\\
+		Q_3(y,z,w) &= R_2(y,z), R_3(z,w)&
+	\end{align*}
+	\textbf{Input}: $Q_2$, $\{Q_3\}$\\
+	\textbf{Variables}:
+	$Partitioning_1 = \{\{R_1\}, \{R_2, R_3\}\}$
+	\begin{enumerate}
+		\setcounter{enumi}{1}
+		\item Iterate over each element of the partition
+	\end{enumerate}
+	$element_2 = \{R_2, R_3\}$
+	\vspace{3cm}
+\end{frame}
+
+\begin{frame}
+	\frametitle{CaVieR}
+	\framesubtitle{Single Query Rewriting Example}
+	\begin{align*}
+		Q_2(x,y,z,w) &= R_1(x,y), \colorbox{lightgreen}{$R_2(y,z), R_3(z,w)$} &\\
+		Q_3(y,z,w) &=\colorbox{lightgreen}{$R_2(y,z), R_3(z,w)$}&
+	\end{align*}
+	\textbf{Input}: $Q_2$, $\{Q_3\}$\\
+	\textbf{Variables}:
+	$Partitioning_1 = \{\{R_1\}, \{R_2, R_3\}\}$,
+	$element_2 = \{R_2, R_3\}$
+	\begin{enumerate}
+		\setcounter{enumi}{2}
+		\item Find homomorphism for the element to a query in V
+	\end{enumerate}
+	Homomorphism between $element_2\ \&\ Q_3$
+	\vspace{3cm}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{CaVieR}
+	\framesubtitle{Single Query Rewriting Example}
+	\begin{align*}
+		Q_2(x,y,z,w) &= R_1(x,y), R_2(y,z), R_3(z,w) &\\
+		Q_3(y,z,w) &= R_2(y,z), R_3(z,w)&
+	\end{align*}
+	\textbf{Input}: $Q_2$, $\{Q_3\}$\\
+	\textbf{Variables}:
+	$Partitioning_1 = \{\{R_1\}, \{R_2, R_3\}\}$
+	\begin{enumerate}
+		\setcounter{enumi}{3}
+		\item If homomorphism is found for every element, check if the resulting query is q-hierarchical
+	\end{enumerate}
+	Resulting query $Q_2'(x,y,z,w) = R_1(x,y), Q_3(y,z,w)$ is q-hierarchical
+	\vspace{3cm}
+\end{frame}
+
+\begin{frame}
+	\frametitle{CaVieR}
+	\framesubtitle{Single Query Rewriting Example}
+	\begin{align*}
+		Q_2(x,y,z,w) &= R_1(x,y), R_2(y,z), R_3(z,w) &\\
+		Q_3(y,z,w) &= R_2(y,z), R_3(z,w)&\\
+	\end{align*}
+	\textbf{Input}: $Q_2$, $\{Q_3\}$
+	\begin{enumerate}
+		\item Iterate over each partition the body of q
+	\end{enumerate}
+	$Partitioning_24= \dots$
+	\vspace{3cm}
+\end{frame}
+
+%
+%\begin{frame}
+%	\frametitle{CaVieR}
+%	\framesubtitle{Single Query Rewriting}
+%	\begin{figure}
+%		\begin{align*}
+%			Q_2(x,y,z,w) &= R_1(x,y), R_2(y,z), R_3(z,w) &\\
+%			Q_3(y,z,w) &= R_2(y,z), R_3(z,w)&\\
+%			Q_2'(x,y,z,w)& = R_1(x,y), Q_3(y,z,w)&
+%		\end{align*}
+%		\vspace{1cm}
+%		Solution: $\{Q_2', Q_3\}$
+%	\end{figure}
+%\end{frame}
+
+%\begin{frame}
+%	\frametitle{CaVieR}
+%	\framesubtitle{Query Set Rewriting}
+%	\begin{algorithm}[H]
+%		\caption{All Rewritings (\textit{Simplified})}\label{alg:AllRewriting}
+%		\begin{algorithmic}[1]
+%			\Function{AllRewritings}{queries: Set[Query]}
+%			\For{$query_i \in queries$}
+%			\If{not isQHierarchical(query)}
+%			\State{$rewritings_i \gets SingleRewriting(queries \setminus query_i, query_i)$}
+%			\If{$rewritings_i.empty()$}
+%			\State{\textbf{return} set()}
+%			\EndIf
+%			\Else
+%			\State{$rewritings_i \gets \{query_i\}$}
+%			\EndIf
+%			\EndFor
+%			\State{\textbf{return} $rewriting_1 \times \dots \times rewriting_n$}
+%			\EndFunction
+%		\end{algorithmic}
+%	\end{algorithm}
+%\end{frame}
+
+\begin{frame}
+	\frametitle{CaVieR}
+	\framesubtitle{Query Set Rewriting}
+	\textbf{Input}: Set[Query] V
+	\begin{enumerate}
+		\item Iterate over each non q-hierarchical query q in V
+		\item Call SingleQueryRewriting with q and $\text{V} \setminus \text{q}$
+		\item If no rewriting is found, return empty set
+		\item Return cartesian product of all rewritings
+	\end{enumerate}
+	\textbf{Output}: Set[Set[Queries]] - all cascading q-hierarchical rewritings for V
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{CaVieR}
+	\framesubtitle{Query Set Rewriting}
+	\begin{tabular}{cccccc}
+		\color{red}$Q_1(x,y,z,w,v)$ &\color{red}=& \color{red}$R_1(x,y),$&\color{red}$R_2(y,z),$&\color{red} $R_3(z,w), $&\color{red}$R_4(w,v)$\\
+		$Q_2(x,y,z,w)$ &=& $R_1(x,y),$&$R_2(y,z),$&$R_3(z,w)$&\\
+		$Q_3(y,z,w)$ &=&& $R_2(y,z),$&$ R_3(z,w)$&\\
+		$Q_4(x,y,z)$ &=& $R_1(x,y),$&$ R_2(y,z)$&&\\
+	\end{tabular}\\
+	\vspace{1cm}
+	\textbf{Input}: $\{Q_1, Q_2, Q_3, Q_4\}$\\
+	\textbf{Variables}:
+	\begin{enumerate}
+		\setcounter{enumi}{0}
+		\item Iterate over each non q-hierarchical query q in V
+	\end{enumerate}
+	$q = Q_1$
 \end{frame}
 
 \begin{frame}
 	\frametitle{CaVieR}
 	\framesubtitle{Query Set Rewriting}
-	\begin{algorithm}[H]
-		\caption{All Rewritings (\textit{Simplified})}\label{alg:AllRewriting}
-		\begin{algorithmic}[1]
-			\Function{AllRewritings}{queries: Set[Query]}
-			\For{$query_i \in queries$}
-			\If{not isQHierarchical(query)}
-			\State{$rewritings_i \gets SingleRewriting(queries \setminus query_i, query_i)$}
-			\If{$rewritings_i.empty()$}
-			\State{\textbf{return} set()}
-			\EndIf
-			\Else
-			\State{$rewritings_i \gets \{query_i\}$}
-			\EndIf
-			\EndFor
-			\State{\textbf{return} $rewriting_1 \times \dots \times rewriting_n$}
-			\EndFunction
-		\end{algorithmic}
-	\end{algorithm}
+	\begin{tabular}{cccccc}
+		\color{red}$Q_1(x,y,z,w,v)$ &\color{red}=& \color{red}$R_1(x,y),$&\color{red}$R_2(y,z),$&\color{red} $R_3(z,w), $&\color{red}$R_4(w,v)$\\
+		$Q_2(x,y,z,w)$ &=& $R_1(x,y),$&$R_2(y,z),$&$R_3(z,w)$&\\
+		$Q_3(y,z,w)$ &=&& $R_2(y,z),$&$ R_3(z,w)$&\\
+		$Q_4(x,y,z)$ &=& $R_1(x,y),$&$ R_2(y,z)$&&\\
+	\end{tabular}\\
+	\vspace{1cm}
+	\textbf{Input}: $\{Q_1, Q_2, Q_3, Q_4\}$\\
+	\textbf{Variables}:	$q = Q_1$
+	\begin{enumerate}
+		\setcounter{enumi}{1}
+		\item Call SingleQueryRewriting with q and $\text{V} \setminus \text{q}$
+	\end{enumerate}
+	SingleQueryRewriting($Q_1, \{Q_2, Q_3, Q_4\}$)\\
+	$rewritingQ_1 = \{Q_1'\}$
+	\begin{align*}
+		Q_1'(x,y,z,w,v) =&\ Q_2(x,y,z,w), R_4(w,v)&\\
+	\end{align*}
 \end{frame}
 
 \begin{frame}
 	\frametitle{CaVieR}
 	\framesubtitle{Query Set Rewriting}
-	\begin{figure}
-		\begin{tabular}{cccccc}
-			$Q_1(x,y,z,w,v)$ &=& $R_1(x,y),$&$R_2(y,z),$& $R_3(z,w), $&$R_4(w,v)$\\
-			$Q_2(x,y,z,w)$ &=& $R_1(x,y),$&$R_2(y,z),$&$R_3(z,w)$&\\
-			$Q_3(y,z,w)$ &=&& $R_2(y,z),$&$ R_3(z,w)$&\\
-			$Q_4(x,y,z)$ &=& $R_1(x,y),$&$ R_2(y,z)$&&\\
-		\end{tabular}
-		\vspace{4cm}
-	\end{figure}
+	\begin{tabular}{cccccc}
+		\color{red}$Q_1(x,y,z,w,v)$ &\color{red}=& \color{red}$R_1(x,y),$&\color{red}$R_2(y,z),$&\color{red} $R_3(z,w), $&\color{red}$R_4(w,v)$\\
+		$Q_2(x,y,z,w)$ &=& $R_1(x,y),$&$R_2(y,z),$&$R_3(z,w)$&\\
+		$Q_3(y,z,w)$ &=&& $R_2(y,z),$&$ R_3(z,w)$&\\
+		$Q_4(x,y,z)$ &=& $R_1(x,y),$&$ R_2(y,z)$&&\\
+	\end{tabular}\\
+	\vspace{1cm}
+	\textbf{Input}: $\{Q_1, Q_2, Q_3, Q_4\}$\\
+	\textbf{Variables}:	$q = Q_1$, 	$rewritingQ_1 = \{Q_1'\}$
+	\begin{enumerate}
+		\setcounter{enumi}{2}
+		\item If no rewriting is found, return empty set
+	\end{enumerate}
+	$rewritingQ_1 \neq \emptyset$ $\rightarrow$ continue
 \end{frame}
 
 \begin{frame}
 	\frametitle{CaVieR}
 	\framesubtitle{Query Set Rewriting}
-	\begin{figure}
-		\begin{tabular}{cccccc}
-			\color{red}$Q_1(x,y,z,w,v)$ &\color{red}=& \color{red}$R_1(x,y),$&\color{red}$R_2(y,z),$&\color{red} $R_3(z,w), $&\color{red}$R_4(w,v)$\\
-			$Q_2(x,y,z,w)$ &=& $R_1(x,y),$&$R_2(y,z),$&$R_3(z,w)$&\\
-			$Q_3(y,z,w)$ &=&& $R_2(y,z),$&$ R_3(z,w)$&\\
-			$Q_4(x,y,z)$ &=& $R_1(x,y),$&$ R_2(y,z)$&&\\
-		\end{tabular}
-		\begin{align*}
-			Q_1'(x,y,z,w,v) =&\ Q_2(x,y,z,w), R_4(w,v)&\\
-		\end{align*}
-		\vspace{2cm}
-	\end{figure}
+	\begin{tabular}{cccccc}
+		$Q_1(x,y,z,w,v)$ &=& $R_1(x,y),$&$R_2(y,z),$& $R_3(z,w), $&$R_4(w,v)$\\
+		\color{red}$Q_2(x,y,z,w)$ &\color{red}=& \color{red}$R_1(x,y),$&\color{red}$R_2(y,z),$&\color{red}$R_3(z,w)$&\\
+		$Q_3(y,z,w)$ &=&& $R_2(y,z),$&$ R_3(z,w)$&\\
+		$Q_4(x,y,z)$ &=& $R_1(x,y),$&$ R_2(y,z)$&&\\
+	\end{tabular}\\
+	\vspace{1cm}
+	\textbf{Input}: $\{Q_1, Q_2, Q_3, Q_4\}$\\
+	\textbf{Variables}:
+	\begin{enumerate}
+		\setcounter{enumi}{0}
+		\item Iterate over each non q-hierarchical query q in V
+	\end{enumerate}
+	$q = Q_2$
 \end{frame}
 
 \begin{frame}
 	\frametitle{CaVieR}
 	\framesubtitle{Query Set Rewriting}
-	\begin{figure}
-		\begin{tabular}{cccccc}
-			$Q_1(x,y,z,w,v)$ &=& $R_1(x,y),$&$R_2(y,z),$& $R_3(z,w), $&$R_4(w,v)$\\
-			\color{red}$Q_2(x,y,z,w)$ &\color{red}=& \color{red}$R_1(x,y),$&\color{red}$R_2(y,z),$&\color{red}$R_3(z,w)$&\\
-			$Q_3(y,z,w)$ &=&& $R_2(y,z),$&$ R_3(z,w)$&\\
-			$Q_4(x,y,z)$ &=& $R_1(x,y),$&$ R_2(y,z)$&&\\
-		\end{tabular}
-		\begin{align*}
-			\color{gray}Q_1'(x,y,z,w,v) =&\color{gray}\ Q_2(x,y,z,w), R_4(w,v)&\\
-			Q_2'(x,y,z,w) =&\ R_1(x,y), Q_3(y,z,w) &\\
-			Q_2''(x,y,z,w) =&\ Q_4(x,y,z), R_3(z,w)&\\
-			Q_2'''(x,y,z,w) =&\ Q_3(y,z,w), Q_4(x,y,z)& \textit{Set semantics}\\
-		\end{align*}
-	\end{figure}
+	\begin{tabular}{cccccc}
+		$Q_1(x,y,z,w,v)$ &=& $R_1(x,y),$&$R_2(y,z),$& $R_3(z,w), $&$R_4(w,v)$\\
+		\color{red}$Q_2(x,y,z,w)$ &\color{red}=& \color{red}$R_1(x,y),$&\color{red}$R_2(y,z),$&\color{red}$R_3(z,w)$&\\
+		$Q_3(y,z,w)$ &=&& $R_2(y,z),$&$ R_3(z,w)$&\\
+		$Q_4(x,y,z)$ &=& $R_1(x,y),$&$ R_2(y,z)$&&\\
+	\end{tabular}\\
+	\vspace{1cm}
+	\textbf{Input}: $\{Q_1, Q_2, Q_3, Q_4\}$\\
+	\textbf{Variables}:	$q = Q_2$
+	\begin{enumerate}
+		\setcounter{enumi}{1}
+		\item Call SingleQueryRewriting with q and $\text{V} \setminus \text{q}$
+	\end{enumerate}
+	SingleQueryRewriting($Q_2, \{Q_1, Q_3, Q_4\}$)\\
+	$rewritingQ_2 = \{Q_2', Q_2'', Q_2'''\}$
+	\begin{align*}
+		Q_2'(x,y,z,w) =&\ R_1(x,y), Q_3(y,z,w) &\\
+		Q_2''(x,y,z,w) =&\ Q_4(x,y,z), R_3(z,w)&\\
+		Q_2'''(x,y,z,w) =&\ Q_3(y,z,w), Q_4(x,y,z)& \textit{Set semantics}\\
+	\end{align*}
 \end{frame}
-
 
 \begin{frame}
 	\frametitle{CaVieR}
 	\framesubtitle{Query Set Rewriting}
-	\begin{figure}
-		\begin{tabular}{cccccc}
-			$Q_1(x,y,z,w,v)$ &=& $R_1(x,y),$&$R_2(y,z),$& $R_3(z,w), $&$R_4(w,v)$\\
-			$Q_2(x,y,z,w)$ &=& $R_1(x,y),$&$R_2(y,z),$&$R_3(z,w)$&\\
-			$Q_3(y,z,w)$ &=&& $R_2(y,z),$&$ R_3(z,w)$&\\
-			$Q_4(x,y,z)$ &=& $R_1(x,y),$&$ R_2(y,z)$&&\\
-		\end{tabular}
-		\begin{align*}
-			Q_1'(x,y,z,w,v) =&\ Q_2(x,y,z,w), R_4(w,v)&\\
-			Q_2'(x,y,z,w) =&\ R_1(x,y), Q_3(y,z,w) &\\
-			Q_2''(x,y,z,w) =&\ Q_4(x,y,z), R_3(z,w)&\\
-			Q_2'''(x,y,z,w) =&\ Q_3(y,z,w), Q_4(x,y,z)& \textit{Set semantics}\\
-		\end{align*}
-		$\{Q_1', Q_2', Q_3, Q_4\}$, $\color{cyan}\{Q_1', Q_2'', Q_3, Q_4\}$ and $\{Q_1', Q_2''', Q_3, Q_4\}$.
-	\end{figure}
+	\begin{tabular}{cccccc}
+		$Q_1(x,y,z,w,v)$ &=& $R_1(x,y),$&$R_2(y,z),$& $R_3(z,w), $&$R_4(w,v)$\\
+		\color{red}$Q_2(x,y,z,w)$ &\color{red}=& \color{red}$R_1(x,y),$&\color{red}$R_2(y,z),$&\color{red}$R_3(z,w)$&\\
+		$Q_3(y,z,w)$ &=&& $R_2(y,z),$&$ R_3(z,w)$&\\
+		$Q_4(x,y,z)$ &=& $R_1(x,y),$&$ R_2(y,z)$&&\\
+	\end{tabular}\\
+	\vspace{1cm}
+	\textbf{Input}: $\{Q_1, Q_2, Q_3, Q_4\}$\\
+	\textbf{Variables}:	$rewritingQ_2 = \{Q_2', Q_2'', Q_2'''\}$
+	\begin{enumerate}
+		\setcounter{enumi}{2}
+		\item If no rewriting is found, return empty set
+	\end{enumerate}
+	$rewritingQ_2 \neq \emptyset$ $\rightarrow$ continue
 \end{frame}
 
-%\subsection{Combined View Tree}
+\begin{frame}
+	\frametitle{CaVieR}
+	\framesubtitle{Query Set Rewriting}
+	\begin{tabular}{cccccc}
+		$Q_1(x,y,z,w,v)$ &=& $R_1(x,y),$&$R_2(y,z),$& $R_3(z,w), $&$R_4(w,v)$\\
+		$Q_2(x,y,z,w)$ &=& $R_1(x,y),$&$R_2(y,z),$&$R_3(z,w)$&\\
+		$Q_3(y,z,w)$ &=&& $R_2(y,z),$&$ R_3(z,w)$&\\
+		$Q_4(x,y,z)$ &=& $R_1(x,y),$&$ R_2(y,z)$&&\\
+	\end{tabular}\\
+	\vspace{1cm}
+	\textbf{Input}: $\{Q_1, Q_2, Q_3, Q_4\}$\\
+	\begin{enumerate}
+		\setcounter{enumi}{3}
+		\item Return cartesian product of all rewritings
+	\end{enumerate}
+	\textbf{return} $rewritingQ_1 \times rewritingQ_2 \times \{Q_3\} \times \{Q_4\} = \{\{Q_1', Q_2', Q_3, Q_4\}, \{Q_1', Q_2'', \dots\}, \{Q_1', Q_2''', \dots\}\}$
+\end{frame}
+
+%\begin{frame}
+%	\frametitle{CaVieR}
+%	\framesubtitle{Query Set Rewriting}
+%	\begin{figure}
+%		\begin{tabular}{cccccc}
+%			\color{red}$Q_1(x,y,z,w,v)$ &\color{red}=& \color{red}$R_1(x,y),$&\color{red}$R_2(y,z),$&\color{red} $R_3(z,w), $&\color{red}$R_4(w,v)$\\
+%			$Q_2(x,y,z,w)$ &=& $R_1(x,y),$&$R_2(y,z),$&$R_3(z,w)$&\\
+%			$Q_3(y,z,w)$ &=&& $R_2(y,z),$&$ R_3(z,w)$&\\
+%			$Q_4(x,y,z)$ &=& $R_1(x,y),$&$ R_2(y,z)$&&\\
+%		\end{tabular}
+%		\begin{align*}
+%			Q_1'(x,y,z,w,v) =&\ Q_2(x,y,z,w), R_4(w,v)&\\
+%		\end{align*}
+%		\vspace{2cm}
+%	\end{figure}
+%\end{frame}
+%
+%\begin{frame}
+%	\frametitle{CaVieR}
+%	\framesubtitle{Query Set Rewriting}
+%	\begin{figure}
+%		\begin{tabular}{cccccc}
+%			$Q_1(x,y,z,w,v)$ &=& $R_1(x,y),$&$R_2(y,z),$& $R_3(z,w), $&$R_4(w,v)$\\
+%			\color{red}$Q_2(x,y,z,w)$ &\color{red}=& \color{red}$R_1(x,y),$&\color{red}$R_2(y,z),$&\color{red}$R_3(z,w)$&\\
+%			$Q_3(y,z,w)$ &=&& $R_2(y,z),$&$ R_3(z,w)$&\\
+%			$Q_4(x,y,z)$ &=& $R_1(x,y),$&$ R_2(y,z)$&&\\
+%		\end{tabular}
+%		\begin{align*}
+%			\color{gray}Q_1'(x,y,z,w,v) =&\color{gray}\ Q_2(x,y,z,w), R_4(w,v)&\\
+%			Q_2'(x,y,z,w) =&\ R_1(x,y), Q_3(y,z,w) &\\
+%			Q_2''(x,y,z,w) =&\ Q_4(x,y,z), R_3(z,w)&\\
+%			Q_2'''(x,y,z,w) =&\ Q_3(y,z,w), Q_4(x,y,z)& \textit{Set semantics}\\
+%		\end{align*}
+%	\end{figure}
+%\end{frame}
+%
+%
+%\begin{frame}
+%	\frametitle{CaVieR}
+%	\framesubtitle{Query Set Rewriting}
+%	\begin{figure}
+%		\begin{tabular}{cccccc}
+%			$Q_1(x,y,z,w,v)$ &=& $R_1(x,y),$&$R_2(y,z),$& $R_3(z,w), $&$R_4(w,v)$\\
+%			$Q_2(x,y,z,w)$ &=& $R_1(x,y),$&$R_2(y,z),$&$R_3(z,w)$&\\
+%			$Q_3(y,z,w)$ &=&& $R_2(y,z),$&$ R_3(z,w)$&\\
+%			$Q_4(x,y,z)$ &=& $R_1(x,y),$&$ R_2(y,z)$&&\\
+%		\end{tabular}
+%		\begin{align*}
+%			Q_1'(x,y,z,w,v) =&\ Q_2(x,y,z,w), R_4(w,v)&\\
+%			Q_2'(x,y,z,w) =&\ R_1(x,y), Q_3(y,z,w) &\\
+%			Q_2''(x,y,z,w) =&\ Q_4(x,y,z), R_3(z,w)&\\
+%			Q_2'''(x,y,z,w) =&\ Q_3(y,z,w), Q_4(x,y,z)& \textit{Set semantics}\\
+%		\end{align*}
+%		$\{Q_1', Q_2', Q_3, Q_4\}$, $\color{cyan}\{Q_1', Q_2'', Q_3, Q_4\}$ and $\{Q_1', Q_2''', Q_3, Q_4\}$.
+%	\end{figure}
+%\end{frame}
+
+
+
 %\begin{frame}
 %	\frametitle{CaVieR}
 %	\framesubtitle{Combined View Tree}
@@ -850,20 +1140,62 @@
 %	\end{block}
 %\end{frame}
 
-
 \begin{frame}
 	\frametitle{CaVieR}
 	\framesubtitle{Cascading View Tree}
 	\begin{figure}
-		\begin{minipage}{0.5\textwidth}
+		\begin{minipage}{0.4\textwidth}
 			\begin{tikzpicture}[
 				level distance=1.5cm,
 				level 2/.style={sibling distance=1.7cm}]
 				
 				\begin{scope}
-					\node {$Q_1$}
+					\node {$Q_1'$}
 					child {node {\footnotesize \texttt{$R_4$}}}
-					child {node {$Q_2$}
+					child {node {$Q_2''$}
+						child {node {\footnotesize \texttt{$R_3$}}}
+						child {node {$Q_4$}
+							child {node {\footnotesize \texttt{$R_1$}}}
+							child {node {\footnotesize \texttt{$R_2$}}}
+						}
+					};
+				\end{scope}
+				
+				\begin{scope}[shift={(-1cm,-3cm)}] % Adjust the shift to position the second graph
+					\node {$Q_3$}
+					child {node {\footnotesize \texttt{$R_2$}}}
+					child {node {\footnotesize \texttt{$R_3$}}};
+				\end{scope}
+				
+				\useasboundingbox (current bounding box.north west) rectangle (current bounding box.south east);
+				\node at (current bounding box.south)[below=10pt, text width=9cm, text centered]
+				{Dependency Graph};
+			\end{tikzpicture}
+		\end{minipage}%
+		\begin{minipage}{0.49\textwidth}
+			\begin{align*}
+				Q_1'(x,y,z,w,v) =&\ Q_2(x,y,z,w), R_4(w,v)&\\
+				Q_2''(x,y,z,w) =&\ Q_4(x,y,z), R_3(z,w)&\\
+				Q_3(y,z,w) =&R_2(y,z), R_3(z,w)&\\
+				Q_4(x,y,z) =& R_1(x,y), R_2(y,z)&\\
+			\end{align*}
+		\end{minipage}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\frametitle{CaVieR}
+	\framesubtitle{Cascading View Tree}
+	\begin{figure}
+		\begin{minipage}{0.4\textwidth}
+			\begin{tikzpicture}[
+				level distance=1.5cm,
+				level 2/.style={sibling distance=1.7cm}]
+				
+				\begin{scope}
+					\node {$Q_1'$}
+					child {node {\footnotesize \texttt{$R_4$}}}
+					child {node {$Q_2''$}
 						child {node {\footnotesize \texttt{$R_3$}}}
 						child {node {$Q_4$}
 							child {node {\footnotesize \texttt{$R_1$}}}
@@ -883,14 +1215,15 @@
 				{Dependency Graph};
 			\end{tikzpicture}
 		\end{minipage}
-		\begin{minipage}{0.49\textwidth}
-			\textbf{Variable Order} for $Q_2(x,y,z,w) = Q_4(x,y,z), R_3(z,w)$:\\
+		\begin{minipage}{0.59\textwidth}
+			\textbf{Variable Order} for \\ $Q_2''(x,y,z,w) = Q_4(x,y,z), R_3(z,w)$
 			\begin{tikzpicture}[
-				level distance=1cm,
+				level distance=0.7cm,
 				sibling distance=0.7cm]
 				\node {$z$}
-				child {node {$x$}}
-				child {node {$y$}}
+				child {node {$x$}
+					child {node {$y$}}
+				}
 				child {node {$w$}};
 			\end{tikzpicture}\\
 			\vspace{3cm}
@@ -902,15 +1235,15 @@
 	\frametitle{CaVieR}
 	\framesubtitle{Cascading View Tree}
 	\begin{figure}
-		\begin{minipage}{0.5\textwidth}
-			\begin{tikzpicture}[
+		\begin{minipage}{0.4\textwidth}
+						\begin{tikzpicture}[
 				level distance=1.5cm,
 				level 2/.style={sibling distance=1.7cm}]
 				
 				\begin{scope}
-					\node {$Q_1$}
+					\node {$Q_1'$}
 					child {node {\footnotesize \texttt{$R_4$}}}
-					child {node {$Q_2$}
+					child {node {$Q_2''$}
 						child {node {\footnotesize \texttt{$R_3$}}}
 						child {node {$Q_4$}
 							child {node {\footnotesize \texttt{$R_1$}}}
@@ -930,28 +1263,34 @@
 				{Dependency Graph};
 			\end{tikzpicture}
 		\end{minipage}
-		\begin{minipage}{0.49\textwidth}
-			\textbf{Variable Order} for $Q_2(x,y,z,w) = Q_4(x,y,z), R_3(z,w)$:\\
+		\begin{minipage}{0.59\textwidth}
+			\textbf{Variable Order} for \\ $Q_2''(x,y,z,w) = Q_4(x,y,z), R_3(z,w)$
 			\begin{tikzpicture}[
-				level distance=1cm,
-				sibling distance=0.7cm]
-				\node {$z$}
-				child {node {$x$}}
+			level distance=0.7cm,
+			sibling distance=0.7cm]
+			\node {$z$}
+			child {node {$x$}
 				child {node {$y$}}
-				child {node {$w$}};
-			\end{tikzpicture}\\
-			\textbf{View Tree} for $Q_2$:\\
-			\begin{tikzpicture}[
-				level distance=1cm,
-				sibling distance=2cm]
-				\node {$V_{Q_4R_3}^{@z}()$}
-				child {node {$V_{Q_4}^{@xy}(z)$}
-					child {node {$Q_4(x,y,z)$}}
-				}
-				child {node {$V_{R_3}^{@w}(z)$}
-					child {node {$R_3(z,w)$}}
-				};
-			\end{tikzpicture}
+			}
+			child {node {$w$}};
+		\end{tikzpicture}\\
+			\vspace{-0.5cm}
+			\textbf{View Tree} for $Q_2''$:\\
+			\begin{figure}
+				\centering
+				\begin{tikzpicture}[
+					level distance=1cm,
+					sibling distance=2cm,
+	    			edge from parent/.style={draw, <-,very thick,>=stealth}]
+					\node {$V_{Q_4R_3}^{@z}()$}
+					child {node {$V_{Q_4}^{@xy}(z)$}
+						child {node {$Q_4(x,y,z)$}}
+					}
+					child {node {$V_{R_3}^{@w}(z)$}
+						child {node {$R_3(w,z)$}}
+					};
+				\end{tikzpicture}
+			\end{figure}
 		\end{minipage}
 	\end{figure}
 \end{frame}
@@ -960,15 +1299,15 @@
 	\frametitle{CaVieR}
 	\framesubtitle{Cascading View Tree}
 	\begin{figure}
-		\begin{minipage}{0.5\textwidth}
-			\begin{tikzpicture}[
+		\begin{minipage}{0.4\textwidth}
+						\begin{tikzpicture}[
 				level distance=1.5cm,
 				level 2/.style={sibling distance=1.7cm}]
 				
 				\begin{scope}
-					\node {$Q_1$}
+					\node {$Q_1'$}
 					child {node {\footnotesize \texttt{$R_4$}}}
-					child {node {$Q_2$}
+					child {node {$Q_2''$}
 						child {node {\footnotesize \texttt{$R_3$}}}
 						child {node {$Q_4$}
 							child {node {\footnotesize \texttt{$R_1$}}}
@@ -1016,6 +1355,30 @@
 	\frametitle{CaVieR}
 	\framesubtitle{Dynamic Evaluation using Cascading View Trees}
 	\begin{figure}
+		\includegraphics[width=0.75\linewidth,trim={0 0 0 11cm},clip]{Figures/CombinedViewTreeD1.pdf}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\frametitle{CaVieR}
+	\framesubtitle{Dynamic Evaluation using Cascading View Trees}
+	\begin{figure}
+		\includegraphics[width=0.75\linewidth,trim={0 0 0 11cm},clip]{Figures/CombinedViewTreeD2.pdf}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\frametitle{CaVieR}
+	\framesubtitle{Dynamic Evaluation using Cascading View Trees}
+	\begin{figure}
+		\includegraphics[width=0.75\linewidth,trim={0 0 0 11cm},clip]{Figures/CombinedViewTreeD3.pdf}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\frametitle{CaVieR}
+	\framesubtitle{Dynamic Evaluation using Cascading View Trees}
+	\begin{figure}
 		\begin{minipage}{0.5\textwidth}
 		\begin{block}{Enumeration}
 			Enumeration follows the topological order of the queries. Output of a query is turned into a stream of inserts in the view tree of queries that depend on it.
@@ -1025,6 +1388,86 @@
 			\vspace{-0.8cm}
 			\includegraphics[width=\linewidth]{Figures/CombinedViewTree.pdf}
 		\end{minipage}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\frametitle{CaVieR}
+	\framesubtitle{Dynamic Evaluation using Cascading View Trees}
+	Enumerating $Q_2$
+	\begin{figure}
+		\begin{tikzpicture}
+			\node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[width=0.6\linewidth,trim={0 1.5cm 0 8.5cm},clip]{Figures/CombinedViewTree.pdf}};
+			\begin{scope}[x={(image.south east)},y={(image.north west)}]
+				\node [anchor=west, blue] at (0.4,0.36) {$y_1$};
+			\end{scope}
+		\end{tikzpicture}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\frametitle{CaVieR}
+	\framesubtitle{Dynamic Evaluation using Cascading View Trees}
+	Enumerating $Q_2$
+	\begin{figure}
+		\begin{tikzpicture}
+			\node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[width=0.6\linewidth,trim={0 1.5cm 0 8.5cm},clip]{Figures/CombinedViewTree.pdf}};
+			\begin{scope}[x={(image.south east)},y={(image.north west)}]
+				\node [anchor=west, blue] at (0.4,0.36) {$y_1$};
+				\node [anchor=west, blue] at (0.29,0.21) {$x_1$};
+			\end{scope}
+		\end{tikzpicture}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\frametitle{CaVieR}
+	\framesubtitle{Dynamic Evaluation using Cascading View Trees}
+	Enumerating $Q_2$
+	\begin{figure}
+		\begin{tikzpicture}
+			\node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[width=0.6\linewidth,trim={0 1.5cm 0 8.5cm},clip]{Figures/CombinedViewTree.pdf}};
+			\begin{scope}[x={(image.south east)},y={(image.north west)}]
+				\node [anchor=west, blue] at (0.4,0.36) {$y_1$};
+				\node [anchor=west, blue] at (0.29,0.21) {$x_1$};
+				\node [anchor=west, blue] at (0.48,0.21) {$z_1$};
+			\end{scope}
+		\end{tikzpicture}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\frametitle{CaVieR}
+	\framesubtitle{Dynamic Evaluation using Cascading View Trees}
+	Enumerating $Q_2$
+	\begin{figure}
+		\begin{tikzpicture}
+			\node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[width=0.6\linewidth,trim={0 1.5cm 0 8.5cm},clip]{Figures/CombinedViewTree.pdf}};
+			\begin{scope}[x={(image.south east)},y={(image.north west)}]
+				\node [anchor=west, blue] at (0.4,0.36) {$y_1$};
+				\node [anchor=west, blue] at (0.29,0.21) {$x_1$};
+				\node [anchor=west, blue] at (0.48,0.21) {$z_1$};
+				\node [anchor=west, red] at (-0.02,0.535) {$(x_1, y_1, z_1) +$};
+			\end{scope}
+		\end{tikzpicture}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\frametitle{CaVieR}
+	\framesubtitle{Dynamic Evaluation using Cascading View Trees}
+	Enumerating $Q_2$
+	\begin{figure}
+		\begin{tikzpicture}
+			\node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[width=0.6\linewidth,trim={0 1.5cm 0 8.5cm},clip]{Figures/CombinedViewTree.pdf}};
+			\begin{scope}[x={(image.south east)},y={(image.north west)}]
+				\node [anchor=west, blue] at (0.4,0.36) {$y_1$};
+				\node [anchor=west, blue] at (0.29,0.21) {$x_1$};
+				\node [anchor=west, blue] at (0.48,0.21) {$z_1$};
+				\node [anchor=west, red] at (-0.02,0.535) {$(x_1, y_1, z_1) +$};
+				\node [anchor=west, red] at (-0.2,0.7) {$(z_1 \rightarrow (x_1, y_1)) +$};
+			\end{scope}
+		\end{tikzpicture}
 	\end{figure}
 \end{frame}
 
