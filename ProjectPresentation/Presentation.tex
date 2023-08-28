@@ -1465,7 +1465,7 @@
 				\node [anchor=west, blue] at (0.29,0.21) {$x_1$};
 				\node [anchor=west, blue] at (0.48,0.21) {$z_1$};
 				\node [anchor=west, red] at (-0.02,0.535) {$(x_1, y_1, z_1) +$};
-				\node [anchor=west, red] at (-0.2,0.7) {$(z_1 \rightarrow (x_1, y_1)) +$};
+				\node [anchor=west, red] at (-0.13,0.68) {$(z_1 \rightarrow (x_1, y_1)) +$};
 			\end{scope}
 		\end{tikzpicture}
 	\end{figure}
@@ -2050,7 +2050,7 @@
 		Using CaVieR, the number of views is smaller or equal to those needed by F-IVM. Thus CaVieR can enumerate the result at least as fast.
 	\end{block}
 	\begin{block}{Datastructure}
-		B+ Trees outperform the other datastructures during enumeration as they support constant time enumeration.
+		B+ Trees outperform the other datastructures during enumeration as they support constant time enumeration. While hashtables support constant delay lookup, the don't support constant delay enumeration.
 	\end{block}
 \end{frame}
 
